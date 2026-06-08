@@ -9,7 +9,11 @@ SELF is designed as a personal cognitive infrastructure. The user's digital iden
 ## Decision
 All components of SELF, including storage, models, and orchestration, must run on the user's local machine by default. No data shall leave the user's machine unless the user explicitly opts into a remote capability (e.g., a remote LLM or cloud-based search).
 
+**Revision**
+Due to the archival of the original KuzuDB project, LadybugDB is selected as the primary graph substrate for local-first operation.
+
 ## Consequences
+
 - **Performance**: The system's performance is limited by the user's hardware.
 - **Privacy**: Data remains under the user's control.
 - **Maintenance**: The user (or the system on their behalf) is responsible for maintaining the local infrastructure (e.g., starting the Ollama server).

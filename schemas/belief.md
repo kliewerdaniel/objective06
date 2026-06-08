@@ -131,7 +131,7 @@ Current version: `0.1.0`
 
 ## Versioning Strategy
 
-Standard semantic versioning. See `schemas/observation_event.md`.
+Standard semantic versioning. See `schemas/observation_event.md` — Migration Runner Interface.
 
 ## Storage Considerations
 

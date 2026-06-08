@@ -146,7 +146,7 @@ The output is strict JSON conforming to the schema. The Extractor is the only pr
 | Output validation failure | Schema check | Quarantine, log, retry with corrective prompt. |
 | Entity linking ambiguous | Multiple candidates | Surface to user, use highest-confidence match. |
 | Token limit exceeded | Truncation | Split batch, retry. |
-| Rate limited | 429 response | Honor backoff, defer batch. |
+| Indirect prompt injection in source content | Secondary classifier score exceeds threshold | Quarantine source event, emit security alert, surface to user. |
 | Conflicting outputs | Multiple models disagree | Surface as a contradiction, defer resolution. |
 
 ## Metrics

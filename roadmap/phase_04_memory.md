@@ -23,6 +23,8 @@ Phase 04 establishes the Memory subsystem, the durable substrate for all state i
 - [ ] Snapshot Manager (Memory & Identity).
 - [ ] Compaction engine.
 - [ ] Retention Manager.
+- [ ] Relevance Scorer and tiered storage (hot/warm/cold/archived).
+- [ ] Build evaluation harness for evaluations/memory_retrieval.md (create if not present).
 
 ## Dependencies
 - Phase 01: Foundation (Initial storage setup).

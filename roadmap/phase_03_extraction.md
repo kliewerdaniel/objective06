@@ -23,6 +23,7 @@ Phase 03 implements the Extractor subsystem, which is the semantic interpretatio
 - [ ] Output Validator implementation.
 - [ ] Entity Linker implementation.
 - [ ] Contradiction Detector implementation.
+- [ ] Build evaluation harness for evaluations/extract_belief.md and evaluations/detect_goal.md (create these files if not present).
 
 ## Dependencies
 - Phase 01: Foundation.

@@ -94,13 +94,13 @@ Stores `summary` records. The summary store:
 - Supports retrieval of "the summary that was generated on date X for entity Y."
 
 ### Audit Log
-
 An append-only log of every state change in the system. The audit log:
 
 - Is write-once.
 - Includes: timestamp, actor, action, before-state-hash, after-state-hash, reason.
 - Is queryable by actor, by action, by entity, by time.
-- Is itself auditable: the user can verify that the log is intact.
+- Is hash-chained. Any gap, truncation, or edit is detectable by re-computing the chain from the genesis entry. The `memory.audit_log_integrity` metric reports the result of the most recent integrity check.
+
 
 ### Vector Index
 
@@ -124,8 +124,9 @@ Creates and restores `memory_snapshot` and `identity_snapshot` records. The snap
 
 Compacts and archives data. The compaction engine:
 
+- Runs a **Relevance Scorer** during compaction: scores each knowledge object on recency, reinforcement count, confidence, and consistency with the current persona. Objects scoring below a configurable threshold are moved to a `cold` tier, excluded from semantic retrieval but retained for provenance. Objects in the `cold` tier for longer than a configurable window are moved to `archived` (filesystem-only, not indexed).
 - Merges small records into larger storage units.
-- Moves cold data to archival storage.
+- Moves data to archival storage.
 - Respects retention policies.
 - Is reversible within a configurable window.
 
@@ -194,6 +195,7 @@ The Memory API is described by:
 - `memory.audit_log_entries.total`
 - `memory.vector_index_size`
 - `memory.snapshot_count`
+- `memory.audit_log_integrity`
 
 ## Future Evolution
 
@@ -210,7 +212,7 @@ The Memory API is described by:
 - **Vector index drift.** When records are updated, the index must be updated consistently.
 - **Audit log size.** The audit log grows unbounded; compression and archival strategies are required.
 - **Time zone handling.** All timestamps are stored in UTC; conversion to local time is a presentation concern.
-- **Concurrent writes.** Multiple subsystems may write concurrently; the storage layer must enforce serialization or use conflict-free replicated data types where appropriate.
+- **Concurrent writes.** Concurrent writes are handled through DuckDB cursor isolation within a single process. The Orchestration layer serializes cross-table UPDATE/DELETE operations through the Write Queue component. Appends (INSERT) are conflict-free. No two OS processes may hold a read-write connection to the same DuckDB file simultaneously.
 
 ## Acceptance Criteria for "Memory is Complete"
 

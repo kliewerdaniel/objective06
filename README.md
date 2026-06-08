@@ -85,7 +85,7 @@ SELF is composed of nine primary subsystems that work together in a continuous l
 
 These subsystems are bound together by:
 
-- A **storage substrate** (DuckDB for analytical state, Kuzu/Neo4j for graph state, vector database for semantic retrieval, filesystem for raw artifacts).
+- A **storage substrate** (DuckDB for analytical state, LadybugDB (or compatible Kuzu-successor) or Neo4j for graph state, vector database for semantic retrieval, filesystem for raw artifacts).
 - A **provenance layer** that records the lineage of every knowledge object.
 - A **security model** that enforces user ownership, consent, and auditability.
 - An **interface layer** that adapts to the various systems SELF observes (filesystem, git, GitHub, RSS, email, browser, terminal, markdown, Objective05, local models, vector database, knowledge graph).
@@ -130,7 +130,7 @@ flowchart TB
 
     subgraph Storage["Storage Substrate"]
         DDB[(DuckDB)]
-        KG[(Kuzu / Neo4j)]
+        KG[(LadybugDB / Neo4j)]
         VDB[(Vector Database)]
         FS_RAW[(Filesystem Artifacts)]
     end

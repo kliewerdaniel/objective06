@@ -23,6 +23,7 @@ Phase 06 implements the Persona Engine, which creates a continuous semantic repr
 - [ ] Consistency Scorer implementation.
 - [ ] Predictor implementation.
 - [ ] Decay Engine implementation.
+- [ ] Build evaluation harness for evaluations/update_persona.md (create if not present).
 
 ## Dependencies
 - Phase 03: Extraction (provides knowledge objects).

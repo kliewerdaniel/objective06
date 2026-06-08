@@ -27,6 +27,13 @@ The Local Models interface abstracts the specific model implementation from the 
 - **Auditability**: Every request is logged with the prompt, output, model ID, and timestamp.
 - **Failure Mode**: If the local model service is down, the system should fail gracefully or switch to a secondary model if configured.
 
+## Recommended Embedding Models
+The following models are recommended for local operation via Ollama:
+- **nomic-embed-text** (Ollama, 768 dims, default for memory-constrained systems)
+- **mxbai-embed-large** (Ollama, 1024 dims, balanced)
+- **llama-embed-nemotron-8b** (Ollama, 4096 dims, high-fidelity but slow on CPU)
+All three are available via `ollama pull`.
+
 ## Implementations
 - **Ollama**: Integration with the Ollama API.
 - **vLLM**: Integration with the vLLM inference server.

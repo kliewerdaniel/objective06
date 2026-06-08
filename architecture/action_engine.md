@@ -99,7 +99,7 @@ Capabilities are versioned. New capabilities are added through the standard cont
 
 ### Sandbox Manager
 
-Executes plans in a sandboxed environment. The sandbox manager:
+Executes plans in a sandboxed environment. The Security Sandbox Manager is a shared service. The Action Engine's Sandbox Manager is a client of the Security subsystem's Sandbox Manager. It does not implement sandboxing independently.
 
 - Isolates execution from the host system.
 - Limits network access to declared endpoints.

@@ -7,7 +7,7 @@ To decouple the system's logic from the specific database technologies used. Thi
 
 ## Substrates
 - **Analytical (DuckDB)**: Used for querying observation events and knowledge objects. Supports SQL-like queries and efficient aggregation.
-- **Graph (Kuzu / Neo4j)**: Used for the identity graph. Supports complex relationship traversals.
+- **Graph (LadybugDB (or compatible Kuzu-successor) or Neo4j)**: Used for the identity graph. Supports complex relationship traversals.
 - **Vector (e.g., Qdrant, Milvus, Chroma)**: Used for semantic search and persona vector storage. Supports similarity search.
 - **Filesystem**: Used for raw artifacts, snapshots, logs, and configuration.
 
@@ -26,6 +26,6 @@ To decouple the system's logic from the specific database technologies used. Thi
 
 ## Implementations
 - **DuckDBAdapter**
-- **KuzuAdapter**
+- **LadybugDBAdapter**
 - **VectorDBAdapter**
 - **FileSystemAdapter**

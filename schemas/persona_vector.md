@@ -28,7 +28,7 @@ Current version: `0.1.0`
 | `timestamp` | string (ISO 8601) | yes | When this snapshot was produced. |
 | `vector` | array of float | yes | The embedding. Length must equal `dimensions`. |
 | `dimensions` | integer | yes | Dimensionality of `vector`. Must be a positive integer. |
-| `model` | string | yes | Embedding model identifier (e.g., `qwen3-embedding-8b`). |
+| `model_lineage_id` | string (UUID) | yes | Unique identifier for the model lineage of this vector. Snapshots from different lineages are not comparable in vector space. |
 | `model_version` | string | yes | Version of the embedding model used. |
 | `update_strategy` | string | yes | How this snapshot was derived. See "Update Strategies". |
 | `update_reason` | string | yes | Why the snapshot was produced. See "Update Reasons". |
@@ -128,7 +128,7 @@ Same as `observation_event`'s provenance. See `schemas/observation_event.md`.
 
 Standard semantic versioning. See `schemas/observation_event.md`.
 
-When the embedding model changes (a `model_swap` update), the new snapshot is the first of a new model lineage. Snapshots across model lineages are not directly comparable in vector space and must not be used as inputs to similarity computations that assume a shared embedding space. Implementations must record `model` and `model_version` on every snapshot precisely so that lineage boundaries are auditable.
+When the embedding model changes (a `model_swap` update), the new snapshot is the first of a new model lineage. Snapshots across model lineages are not directly comparable in vector space and must not be used as inputs to similarity computations that assume a shared embedding space. Implementations must record `model` and `model_version` on every snapshot precisely so that lineage boundaries are auditable. Implementations must refuse to compute cosine similarity between vectors from different `model_lineage_id` values. The re-anchoring procedure creates a new lineage, re-embeds all contributing knowledge IDs under the new model, and marks all prior snapshots as `lineage_archived`.
 
 ## Storage Considerations
 

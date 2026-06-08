@@ -35,6 +35,8 @@ Current version: `0.1.0`
 | `last_reinforced` | string (ISO 8601) | yes | When the relationship was last reinforced or observed. |
 | `valid_from` | string (ISO 8601) | no | When the relationship became valid. |
 | `valid_to` | string (ISO 8601) | no | When the relationship ceased to be valid. |
+| `recorded_at` | string (ISO 8601) | yes | When SELF first recorded this relationship. |
+| `recorded_updated_at` | string (ISO 8601) | yes | When SELF last updated its record. |
 | `status` | string | no | Lifecycle status. See "Status Values". |
 | `history` | array of `RelationshipEvent` | no | Chronological list of state-change events. |
 | `provenance` | `Provenance` object | yes | Provenance metadata. |
@@ -254,7 +256,7 @@ When a new `relationship_type` is added without altering existing fields, the mi
 
 ## Storage Considerations
 
-Relationships are stored in the graph store (Kuzu or Neo4j) as directed edges between two identity nodes. The relationship ID is stored as an edge property and used as the primary key for retrieval, updates, and history lookups.
+Relationships are stored in the graph store (LadybugDB (or compatible Kuzu-successor) or Neo4j) as directed edges between two identity nodes. The relationship ID is stored as an edge property and used as the primary key for retrieval, updates, and history lookups.
 
 The following indexes are required for production use:
 

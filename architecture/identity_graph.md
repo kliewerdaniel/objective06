@@ -40,7 +40,7 @@ The Identity Graph is the canonical source for structured queries about the user
 | --- | --- | --- |
 | Memory | Required | Persistence. |
 | Extractor | Required | Entity and edge proposals. |
-| Storage (Kuzu or Neo4j) | Required | Graph query engine. |
+| Storage (LadybugDB (or compatible Kuzu-successor) or Neo4j) | Required | Graph query engine. |
 | Orchestration | Required | Scheduling of maintenance tasks. |
 | Security | Required | Access control. |
 
@@ -70,12 +70,15 @@ Stores edges between nodes. Each edge has:
 
 ### Temporal Index
 
-Indexes nodes and edges by their temporal validity. The temporal index supports:
+Indexes nodes and edges by their temporal validity. The temporal index is bitemporal: it tracks both `valid_time` (when the fact was true in the world) and `transaction_time` (when SELF recorded the fact). Queries default to valid-time semantics. Audit-time queries use transaction-time semantics. The `Temporal Index` component maintains separate B-tree indexes for both dimensions.
+
+The temporal index supports:
 
 - "As of time T" queries: what was true at time T?
 - "During range [T1, T2]" queries: what was true at any point in the range?
 - "Since time T" queries: what has been true since T?
 - "Changed at time T" queries: what changed at T?
+- "Recorded at time T" queries: what did SELF learn at time T?
 
 ### Entity Resolver
 
@@ -178,6 +181,7 @@ The following node types are defined in the initial schema. Additional types can
 | Schema violation | Validator | Reject, log. |
 | Storage corruption | Integrity check | Rebuild from provenance chain. |
 | Cycle in temporal validity | Validator | Reject, log. |
+| Substrate archived upstream | Integrity check | Use LadybugDB fork. |
 
 ## Metrics
 

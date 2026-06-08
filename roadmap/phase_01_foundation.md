@@ -9,7 +9,7 @@ Phase 01 focuses on the fundamental infrastructure required for all other subsys
 
 ## Objectives
 - Establish the project scaffolding (folders, basic build tools).
-- Implement the Storage Substrates (DuckDB, Kuzu, Vector DB, Filesystem).
+- Implement the Storage Substrates (DuckDB, LadybugDB (or compatible Kuzu-successor) or Neo4j, Vector DB, Filesystem).
 - Implement the primary Observability primitives (logging, metrics, audit logs).
 - Define the core data schemas for the basic entities (Observation Event, Knowledge Object).
 - Establish the CI/CD and local development environment.
@@ -22,6 +22,7 @@ Phase 01 focuses on the fundamental infrastructure required for all other subsys
 - [ ] Basic Metrics and Health reporting.
 - [ ] Core Schema definitions (Observation Event, Knowledge Object).
 - [ ] Unit tests for Storage and Observability primitives.
+- [ ] Onboarding flow specification and implementation (structured self-description → seed observation event → seed persona vector).
 
 ## Dependencies
 - None.
@@ -34,4 +35,4 @@ Phase 01 focuses on the fundamental infrastructure required for all other subsys
 - A user can run the system and see "Foundation Complete" in the logs.
 - A raw observation can be ingested, stored in DuckDB, and retrieved by ID.
 - Every write to the database is accompanied by a corresponding entry in the audit log.
-- Metrics for ingestion rate and storage health are being emitted.
+\n\n[ ] Resolve Q1 (minimum viable observation surface) and Q6 (action authorization granularity) before Phase 2 begins.

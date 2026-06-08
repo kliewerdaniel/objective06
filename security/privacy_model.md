@@ -34,3 +34,12 @@ By default, all data stays on the user's machine. The system is designed to func
 
 ## 8. Compliance
 SELF is designed to be compliant with major privacy regulations (GDPR, CCPA, etc.) by adhering to the principles of data minimization, purpose limitation, storage limitation, and user rights.
+
+### Right to Erasure (GDPR Art. 17)
+A deletion request for any knowledge object, observation event, or identity node must cascade through the full provenance chain. The cascade is logged in the audit log. The system must confirm completion to the user with a count of deleted and redacted records.
+
+### Right to Portability (GDPR Art. 20)
+The export format is newline-delimited JSON (NDJSON), one schema-conformant record per line, with a manifest file listing record counts by type and schema version.
+
+### Data Minimization
+The Observer's privacy filters are the primary minimization mechanism. Filters must be configurable per source and applied before any content enters the event store.

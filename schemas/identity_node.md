@@ -28,6 +28,8 @@ Current version: `0.1.0`
 | `attributes` | object | no | Free-form typed attributes. |
 | `first_seen` | string (ISO 8601) | yes | When the entity was first observed. |
 | `last_seen` | string (ISO 8601) | yes | When the entity was last observed. |
+| `recorded_at` | string (ISO 8601) | yes | When SELF first recorded this node. |
+| `recorded_updated_at` | string (ISO 8601) | yes | When SELF last updated its record. |
 | `valid_from` | string (ISO 8601) | no | When the entity became valid. |
 | `valid_to` | string (ISO 8601) | no | When the entity ceased to be valid. |
 | `deprecated` | boolean | no | Whether the node has been deprecated. |
@@ -128,7 +130,7 @@ Standard semantic versioning. See `schemas/observation_event.md` for the full st
 
 ## Storage Considerations
 
-Identity nodes are stored in the graph store (Kuzu or Neo4j). They are indexed by type, name, and aliases for fast lookup. The temporal validity is indexed for temporal queries.
+Identity nodes are stored in the graph store (LadybugDB (or compatible Kuzu-successor) or Neo4j). They are indexed by type, name, and aliases for fast lookup. The temporal validity is indexed for temporal queries.
 
 ## Privacy Considerations
 

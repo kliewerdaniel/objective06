@@ -67,7 +67,7 @@ See `schemas/knowledge_object.md`.
 
 ### 3.3 Identity Node
 
-An **identity node** is an entity in the user's identity graph: the user themselves, a person, a project, an organization, a tool, a concept, a place. Identity nodes have types, attributes, and temporal validity.
+An **identity node** is an entity in the user's identity graph: the user themselves, a person, a project, an organization, a tool, a concept, a place. Identity nodes have types, attributes, and temporal validity. Identity nodes use bitemporal modeling. `valid_time` tracks when a fact was true in the world; `transaction_time` tracks when SELF learned it. Queries must specify which time axis they operate on.
 
 See `schemas/identity_node.md`.
 
@@ -146,7 +146,7 @@ The loop is continuous. Observation never stops while the system runs. Extractio
 The system is bound to four storage substrates, each chosen for fit:
 
 - **DuckDB** — analytical queries over observation events and knowledge objects.
-- **Kuzu / Neo4j** — graph queries over the identity graph.
+- **LadybugDB (default) or Neo4j (enterprise fallback)** — graph queries over the identity graph.
 - **Vector Database** — semantic similarity over embeddings.
 - **Filesystem** — raw artifacts, snapshots, configuration, logs.
 
@@ -217,7 +217,7 @@ See `architecture/synthesis_engine.md`.
 
 ### 6.9 Storage
 
-Defines the interfaces to DuckDB, Kuzu/Neo4j, the vector database, and the filesystem. The Storage subsystem is the substrate abstraction layer. No other subsystem talks to storage directly.
+Defines the interfaces to DuckDB, LadybugDB (default) or Neo4j (enterprise fallback), the vector database, and the filesystem. The Storage subsystem is the substrate abstraction layer. No other subsystem talks to storage directly.
 
 See `architecture/storage.md`.
 

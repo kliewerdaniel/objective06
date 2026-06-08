@@ -23,6 +23,8 @@ Phase 07 builds the Digital Twin, the primary user interface for SELF. This phas
 - [ ] Answer Composer implementation.
 - [ ] Citation Tracker implementation.
 - [ ] Session Manager implementation.
+- [ ] Build evaluation harness for evaluations/memory_retrieval.md (create if not present).
+- [ ] Build evaluation harness for evaluations/knowledge_synthesis.md (create latter if not present).
 
 ## Dependencies
 - Phase 04: Memory.

@@ -82,7 +82,7 @@ Aggregates the relevant state for synthesis. The aggregator:
 - Pulls identity graph changes.
 - Pulls persona updates.
 - Deduplicates.
-- Ranks by importance (using persona consistency, recency, and frequency).
+- Ranks by importance (using persona consistency, recency, and frequency). The aggregator excludes `archived` knowledge objects from synthesis input unless the query explicitly requests historical content. It logs the exclusion count in the synthesis audit record.
 
 ### Prompt Builder
 

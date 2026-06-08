@@ -140,6 +140,10 @@ Detects anomalies. The detector:
 - Triggers alerts and protective actions.
 - Logs detections.
 
+### Injection Classifier
+
+A lightweight model or fine-tuned classifier that scores all untrusted input segments (email bodies, page content, commit messages, note text) for prompt injection likelihood before they enter any extraction prompt. Outputs a score and a flag. Flagged content is quarantined and logged before the primary model sees it.
+
 ### Audit Query Engine
 
 Supports queries against the audit log for security review. The engine:

@@ -139,7 +139,7 @@
 
 ## Versioning Strategy
 
-Standard semantic versioning.
+Standard semantic versioning. See `schemas/observation_event.md` — Migration Runner Interface.
 
 ## Storage Considerations
 

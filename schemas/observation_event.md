@@ -16,6 +16,8 @@ Current version: `0.1.0`
 
 Versioning follows semantic versioning. Breaking changes require a major version bump. See "Versioning Strategy" below.
 
+Migrations are implemented as versioned Python modules in `tools/schema_migrate/`. Each module exports a `migrate(record: dict, from_version: str, to_version: str) -> dict` function. The Storage subsystem automatically applies the chain of migrations on read when a record's `schema_version` does not match the current version. Migrations are idempotent. The migration chain is tested in `evaluations/schema_migration.md`.
+
 ## Field Definitions
 
 ### Top-Level Fields

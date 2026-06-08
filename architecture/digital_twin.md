@@ -140,9 +140,9 @@ Manages conversation state within a session. The session manager:
 
 Defends against prompt injection in user input. The sanitizer:
 
-- Detects attempts to override system instructions.
-- Detects attempts to exfiltrate state.
-- Strips or escapes dangerous patterns.
+- (1) Structural isolation — retrieved content is injected into a fixed slot that the primary model is instructed to treat as data;
+- (2) Secondary classifier — a lightweight model (distinct from the generation model) scores each retrieved segment for injection likelihood before assembly;
+- (3) Citation-lock — if the generation model's output references a knowledge object not in the declared retrieval set, the response is rejected and regenerated.
 - Records attempted attacks.
 
 ### Permission Enforcer

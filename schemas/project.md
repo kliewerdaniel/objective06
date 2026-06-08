@@ -270,7 +270,7 @@ Current version: `0.1.0`
 
 ## Versioning Strategy
 
-Standard semantic versioning. See `schemas/observation_event.md`. Additive changes (new optional fields, new event types, new status values that are backward compatible) bump the minor version. Breaking changes (renaming fields, changing the meaning of existing fields, removing required fields, or changing the allowed event vocabulary) bump the major version and require a migration plan that re-derives `status` from `history` for existing records.
+Standard semantic versioning. See `schemas/observation_event.md` — Migration Runner Interface. Additive changes (new optional fields, new event types, new status values that are backward compatible) bump the minor version. Breaking changes (renaming fields, changing the meaning of existing fields, removing required fields, or changing the allowed event vocabulary) bump the major version and require a migration plan that re-derives `status` from `history` for existing records.
 
 ## Storage Considerations
 

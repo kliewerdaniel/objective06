@@ -114,7 +114,6 @@ Monitors and enforces resource budgets. The backpressure manager:
 - Supports user-defined budgets.
 
 ### Audit Logger
-
 Owns the audit log. The audit logger:
 
 - Records every state change.
@@ -122,9 +121,13 @@ Owns the audit log. The audit logger:
 - Records every subsystem invocation and result.
 - Is append-only.
 - Supports queries.
-- Supports integrity verification.
+- Supports integrity verification via hash-chaining. Each audit log entry includes a `prev_hash` field containing the SHA-256 of the previous entry's canonical JSON. The log head hash is stored in a separate, user-readable `audit_head.sha256` file updated atomically on each write. Integrity verification reads the chain from any entry forward, recomputing hashes.
+
+### Write Queue
+A serializing queue for UPDATE and DELETE operations issued to DuckDB. All subsystems enqueue writes rather than calling the Storage API directly for mutations. Appends bypass the queue.
 
 ### Lifecycle Manager
+
 
 Owns the system's lifecycle. The lifecycle manager:
 

@@ -69,13 +69,13 @@ Stores the persona vector over time. The store:
 - Supports similarity queries (is the current persona close to a past persona?).
 
 ### Embedding Computer
-
 Computes embeddings for knowledge objects and updates. The embedding computer:
 
-- Uses a local embedding model by default.
+- The embedding model is pinned per SELF installation. The active model is stored in configuration alongside a `model_lineage_id` UUID. All vectors in a lineage share a model; cross-lineage similarity is prohibited. When a model swap occurs, the entire persona trajectory must be re-embedded under the new model before the system resumes normal operation. Partial re-embedding is not permitted.
 - Supports model swapping.
 - Caches embeddings for unchanged content.
 - Is model-version-aware: each embedding carries the model ID and version.
+
 
 ### Persona Updater
 
@@ -109,8 +109,9 @@ Predicts the user's next likely actions, interests, or knowledge acquisitions. T
 
 Models the temporal decay of persona influence. The decay engine:
 
-- Ensures that very old persona states have less influence on the current state.
-- Supports multiple decay functions (linear, exponential, step).
+- Runs nightly.
+- Applies a configurable decay function to the influence weight of each knowledge object on the persona vector. Objects not reinforced within the decay horizon contribute diminishing influence.
+- Decay does not delete knowledge objects; it reduces their weight in future persona updates.
 - Is configurable.
 - Is auditable: the user can see how decay affects their persona.
 

@@ -23,6 +23,8 @@ Phase 09 implements the Synthesis Engine, which turns the system's accumulated s
 - [ ] Generation Engine with grounding checks.
 - [ ] Style Adapter implementation.
 - [ ] Notification Manager for synthesis completion.
+- [ ] Build evaluation harness for evaluations/predict_next_task.md (create if not present).
+- [ ] Resolve Q3 (synthesis cadence), Q4 (silence modeling), and Q5 (forgetting model) before implementation.
 
 ## Dependencies
 - Phase 04: Memory (source of data).

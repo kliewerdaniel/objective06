@@ -14,9 +14,10 @@ This document outlines the primary threats to the SELF system and the correspond
 ## 2. Prompt Injection
 - **Threat**: An attacker provides malicious input (e.g., in an email or a web page) that tricks the LLM into performing unauthorized actions or revealing sensitive information.
 - **Mitigation**:
-    - **Prompt Sanitization**: Input is cleaned before being passed to the model.
-    - **Dual-Model Architecture**: A smaller model classifies intent, a larger one generates content.
-    - **Output Validation**: Model outputs are validated against schemas before use.
+    - **Structural Query Separation**: Treat retrieved content as data, never as instruction.
+    - **Trust-Tier Tagging**: Explicit trust-tier tagging on all prompt segments.
+    - **Injection Classifier**: A secondary classifier model whose sole job is to flag injection-suspicious content before it reaches the primary model.
+    - **Rate-Limiting**: Rate-limiting on re-extracted content from a single source that newly triggers high-confidence knowledge objects.
     - **Sandboxing**: Actions are performed in restricted environments.
     - **Human-in-the-loop**: High-sensitivity actions require explicit confirmation.
 
@@ -50,6 +51,7 @@ This document outlines the primary threats to the SELF system and the correspond
     - **Snapshots**: Regular backups of the system state.
     - **Schema Validation**: Every write is checked against a strict schema.
     - **Immutability**: Observation events are immutable.
+    - **Hash-chain Verification**: Audit log tampering is detected via hash-chain verification. The chain is checked on startup and on demand. A broken chain halts the system and alerts the user.
 
 ## 7. Denial of Service (DoS)
 - **Threat**: A large volume of input (e.g., a huge number of emails) overwhelms the system.

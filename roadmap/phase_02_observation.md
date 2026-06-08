@@ -24,6 +24,7 @@ Phase 02 focuses on building the Observer subsystem, which is the primary data i
 - [ ] Ingest Queue implementation.
 - [ ] Event Log Writer implementation.
 - [ ] Basic health metrics and alerts.
+- [ ] Build evaluation harness for evaluations/discover_project.md.
 
 ## Dependencies
 - Phase 01: Foundation (Storage, Audit Logs).

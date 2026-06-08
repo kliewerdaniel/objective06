@@ -1,6 +1,6 @@
 # Storage Subsystem
 
-> The Storage subsystem defines the interfaces and implementations for the durable substrates of SELF: DuckDB for analytical state, Kuzu or Neo4j for graph state, a vector database for semantic retrieval, and the filesystem for raw artifacts.
+> The Storage subsystem defines the interfaces and implementations for the durable substrates of SELF: DuckDB for analytical state, LadybugDB (or compatible Kuzu-successor) or Neo4j for graph state, a vector database for semantic retrieval, and the filesystem for raw artifacts.
 
 ---
 
@@ -11,7 +11,7 @@ The Storage subsystem is the substrate abstraction layer of SELF. It hides the d
 The Storage subsystem is also the place where substrate choices are made. SELF uses:
 
 - **DuckDB** for analytical queries over observation events and knowledge objects.
-- **Kuzu or Neo4j** for the identity graph.
+- **LadybugDB (or compatible Kuzu-successor) or Neo4j** for the identity graph.
 - **A vector database** (FAISS, sqlite-vss, Qdrant, or compatible) for semantic retrieval.
 - **The filesystem** for raw artifacts, snapshots, configuration, and logs.
 
@@ -68,7 +68,11 @@ DuckDB is chosen for:
 
 See `decisions/ADR-004-duckdb.md`.
 
-## Substrate: Kuzu or Neo4j
+## Concurrency Constraint
+DuckDB must be opened by exactly one OS process. All subsystems within that process may hold separate connections (cursors) to the same DuckDB file. Cross-process access is not supported and will produce lock errors. The Orchestration layer is the process boundary; it owns the DuckDB connection pool.
+
+
+## Substrate: LadybugDB (or compatible Kuzu-successor)
 
 The graph store for the Identity Graph. It holds:
 
@@ -76,7 +80,7 @@ The graph store for the Identity Graph. It holds:
 - Identity edges.
 - Temporal annotations.
 
-Kuzu is the default. Neo4j is supported as an alternative. The choice between them is documented in `decisions/`. Either way, the graph store is accessed through the Identity Graph subsystem, not directly.
+LadybugDB is the default. Neo4j is supported as an alternative. Note: The original Kuzu project is archived; LadybugDB is the community-designated successor. See https://github.com/LadybugDB/ladybug for installation. Either way, the graph store is accessed through the Identity Graph subsystem, not directly.
 
 ## Substrate: Vector Database
 
