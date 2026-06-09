@@ -145,7 +145,7 @@ The loop is continuous. Observation never stops while the system runs. Extractio
 
 The system is bound to four storage substrates, each chosen for fit:
 
-- **DuckDB** — analytical queries over observation events and knowledge objects.
+- **DuckDB** — analytical queries over observation events and knowledge objects. DuckDB is a single-process embedded database. The Storage subsystem must own all read-write access; no subsystem may open a second DuckDB file handle in a separate process.
 - **LadybugDB (default) or Neo4j (enterprise fallback)** — graph queries over the identity graph.
 - **Vector Database** — semantic similarity over embeddings.
 - **Filesystem** — raw artifacts, snapshots, configuration, logs.

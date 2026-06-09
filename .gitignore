@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# DuckDB
+*.duckdb
+*.duckdb.wal
+
+# FAISS
+*.faiss
+*.faiss.index
+
+# Snapshot artifacts
+snapshots/
+*.snapshot
+*.snap
+
+# Audit log
+audit_head.sha256
+
+# Backup
+backups/
+
+# Logs
+*.log
+logs/
+
+# Configuration (local overrides)
+config.local.yaml
+config.local.yml
+config.local.json
+
+# Environment
+.env
+.env.local
+
+# Coverage
+coverage/
+.coverage
+coverage.xml
+htmlcov/
+
+# Mypy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# OS-specific
+.DS_Store
+*.swp

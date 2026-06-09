@@ -1,0 +1,51 @@
+[project]
+name = "self"
+version = "0.1.0"
+description = "Synthetic Evolutionary Local Framework — local-first cognitive infrastructure"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.0",
+    "duckdb>=1.0",
+    "faiss-cpu>=1.7",
+    "pyyaml>=6.0",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.5",
+    "mypy>=1.10",
+    "pre-commit>=3.0",
+]
+test = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_configs = true
+disallow_untyped_defs = true
+explicit_package_bases = true
+ignore_missing_imports = true
+exclude = [
+    "examples/",
+    "evaluations/",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"

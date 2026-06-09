@@ -267,7 +267,7 @@ The following indexes are required for production use:
 - Index on `last_reinforced` for temporal decay and recency queries.
 - Index on `weight` for ranking by relationship strength.
 
-The `history` array is stored inline on the edge for relationships with a small number of events, and is moved to a separate `relationship_event` table or collection for relationships with large histories. In Kuzu, history is modeled as an additional node type connected to the edge via a `HAS_EVENT` relationship. In Neo4j, history is modeled as an embedded list for small histories and as linked event nodes for large histories.
+The `history` array is stored inline on the edge for relationships with a small number of events, and is moved to a separate `relationship_event` table or collection for relationships with large histories. In LadybugDB, history is modeled as an additional node type connected to the edge via a `HAS_EVENT` relationship. In Neo4j, history is modeled as an embedded list for small histories and as linked event nodes for large histories.
 
 Bidirectional relationships are stored as a single canonical edge with `bidirectional: true`; the graph store is queried in both directions without duplicating the edge. Reverse traversal is handled by the query layer.
 
