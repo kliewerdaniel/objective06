@@ -31,6 +31,7 @@ class Config:
         s.setdefault("raw_dir", str(base / "raw"))
         s.setdefault("faiss_index_path", str(base / "vectors.faiss"))
         s.setdefault("audit_head_path", str(base / "audit_head.sha256"))
+        s.setdefault("vector_dir", str(base / "vectors"))
         log = self._data.setdefault("logging", {})
         log.setdefault("level", "INFO")
         log.setdefault("file", str(Path("~/.local/share/self/self.log").expanduser()))
@@ -59,6 +60,10 @@ class Config:
     @property
     def faiss_index_path(self) -> str:
         return str(self._data["storage"]["faiss_index_path"])
+
+    @property
+    def vector_dir(self) -> str:
+        return str(self._data["storage"]["vector_dir"])
 
     @property
     def audit_head_path(self) -> str:
@@ -96,7 +101,7 @@ class Config:
         return self._data.get(key, default)
 
     def ensure_dirs(self) -> None:
-        for path_str in [self.snapshot_dir, self.raw_dir]:
+        for path_str in [self.snapshot_dir, self.raw_dir, self.vector_dir]:
             Path(path_str).mkdir(parents=True, exist_ok=True)
         Path(self.duckdb_path).parent.mkdir(parents=True, exist_ok=True)
         Path(self.audit_log_path).parent.mkdir(parents=True, exist_ok=True)

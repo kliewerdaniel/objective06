@@ -155,6 +155,150 @@ class DuckDBAdapter(StorageAPI):
                 reason VARCHAR DEFAULT ''
             );
         """,
+        "action_request": """
+            CREATE TABLE IF NOT EXISTS action_request (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                capability VARCHAR NOT NULL,
+                params JSON NOT NULL,
+                requested_by VARCHAR NOT NULL,
+                session_id VARCHAR,
+                status VARCHAR NOT NULL DEFAULT 'pending',
+                sensitivity VARCHAR NOT NULL DEFAULT 'safe',
+                requires_confirmation BOOLEAN DEFAULT false,
+                created_at VARCHAR NOT NULL,
+                updated_at VARCHAR NOT NULL
+            );
+        """,
+        "action_result": """
+            CREATE TABLE IF NOT EXISTS action_result (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                request_id VARCHAR NOT NULL,
+                status VARCHAR NOT NULL,
+                output JSON,
+                error VARCHAR,
+                rollback_status VARCHAR,
+                executed_at VARCHAR NOT NULL
+            );
+        """,
+        "action_audit": """
+            CREATE TABLE IF NOT EXISTS action_audit (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                request_id VARCHAR NOT NULL,
+                step VARCHAR NOT NULL,
+                status VARCHAR NOT NULL,
+                detail JSON,
+                timestamp VARCHAR NOT NULL
+            );
+        """,
+        "permission_grant": """
+            CREATE TABLE IF NOT EXISTS permission_grant (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                user VARCHAR NOT NULL,
+                capability VARCHAR NOT NULL,
+                scope VARCHAR DEFAULT '*',
+                granted_at VARCHAR NOT NULL,
+                expires_at VARCHAR,
+                revoked BOOLEAN DEFAULT false
+            );
+        """,
+        "auth_session": """
+            CREATE TABLE IF NOT EXISTS auth_session (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                user VARCHAR NOT NULL,
+                token_hash VARCHAR NOT NULL,
+                created_at VARCHAR NOT NULL,
+                expires_at VARCHAR NOT NULL,
+                revoked BOOLEAN DEFAULT false
+            );
+        """,
+        "persona_snapshot": """
+            CREATE TABLE IF NOT EXISTS persona_snapshot (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                model_id VARCHAR NOT NULL,
+                vector JSON NOT NULL,
+                timestamp VARCHAR NOT NULL,
+                reason VARCHAR DEFAULT ''
+            );
+        """,
+        "evaluation_spec": """
+            CREATE TABLE IF NOT EXISTS evaluation_spec (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                name VARCHAR NOT NULL,
+                category VARCHAR NOT NULL,
+                description VARCHAR DEFAULT '',
+                inputs JSON DEFAULT '{}',
+                procedure JSON DEFAULT '{}',
+                expected_outputs JSON DEFAULT '{}',
+                scoring_criteria JSON DEFAULT '{}',
+                pass_threshold REAL NOT NULL DEFAULT 0.8,
+                created_at VARCHAR NOT NULL,
+                updated_at VARCHAR NOT NULL
+            );
+        """,
+        "evaluation_run": """
+            CREATE TABLE IF NOT EXISTS evaluation_run (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                spec_id VARCHAR NOT NULL,
+                status VARCHAR NOT NULL DEFAULT 'pending',
+                started_at VARCHAR NOT NULL,
+                completed_at VARCHAR,
+                config JSON DEFAULT '{}',
+                error VARCHAR
+            );
+        """,
+        "evaluation_result": """
+            CREATE TABLE IF NOT EXISTS evaluation_result (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                run_id VARCHAR NOT NULL,
+                metric VARCHAR NOT NULL,
+                score REAL NOT NULL,
+                passed BOOLEAN NOT NULL,
+                details JSON DEFAULT '{}',
+                recorded_at VARCHAR NOT NULL
+            );
+        """,
+        "evaluation_report": """
+            CREATE TABLE IF NOT EXISTS evaluation_report (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                run_ids JSON NOT NULL,
+                summary JSON NOT NULL,
+                markdown VARCHAR NOT NULL,
+                created_at VARCHAR NOT NULL
+            );
+        """,
+        "ground_truth": """
+            CREATE TABLE IF NOT EXISTS ground_truth (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                spec_id VARCHAR NOT NULL,
+                inputs JSON NOT NULL,
+                expected_outputs JSON NOT NULL,
+                version INTEGER NOT NULL DEFAULT 1,
+                created_at VARCHAR NOT NULL,
+                updated_at VARCHAR NOT NULL,
+                deprecated BOOLEAN DEFAULT false
+            );
+        """,
+        "secret_record": """
+            CREATE TABLE IF NOT EXISTS secret_record (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                name VARCHAR NOT NULL,
+                encrypted_value VARCHAR NOT NULL,
+                created_at VARCHAR NOT NULL,
+                updated_at VARCHAR NOT NULL
+            );
+        """,
     }
 
     def __init__(
@@ -199,16 +343,7 @@ class DuckDBAdapter(StorageAPI):
                         "priority": "priority ASC",
                         "timestamp": "timestamp DESC",
                         "queued_at": "queued_at ASC",
-                        "persona_snapshot": """
-            CREATE TABLE IF NOT EXISTS persona_snapshot (
-                schema_version VARCHAR NOT NULL,
-                id VARCHAR PRIMARY KEY,
-                model_id VARCHAR NOT NULL,
-                vector JSON NOT NULL,
-                timestamp VARCHAR NOT NULL,
-                reason VARCHAR DEFAULT ''
-            );
-        """,
+                        "persona_snapshot": "timestamp DESC",
                     }
                     order_col = order_map.get(str(value), "timestamp DESC")
                 continue
