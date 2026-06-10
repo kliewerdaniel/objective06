@@ -130,7 +130,7 @@ Standard semantic versioning. See `schemas/observation_event.md` for the full st
 
 ## Storage Considerations
 
-Identity nodes are stored in the graph store (LadybugDB (or compatible Kuzu-successor) or Neo4j). They are indexed by type, name, and aliases for fast lookup. The temporal validity is indexed for temporal queries.
+Identity nodes are stored in the graph store (LadybugDB (default) or Neo4j (enterprise fallback)). They are indexed by type, name, and aliases for fast lookup. The temporal validity is indexed for temporal queries.
 
 ## Privacy Considerations
 

@@ -40,7 +40,7 @@ The Identity Graph is the canonical source for structured queries about the user
 | --- | --- | --- |
 | Memory | Required | Persistence. |
 | Extractor | Required | Entity and edge proposals. |
-| Storage (LadybugDB (or compatible Kuzu-successor) or Neo4j) | Required | Graph query engine. |
+| Storage (LadybugDB (default) or Neo4j (enterprise fallback)) | Required | Graph query engine. |
 | Orchestration | Required | Scheduling of maintenance tasks. |
 | Security | Required | Access control. |
 
@@ -182,6 +182,7 @@ The following node types are defined in the initial schema. Additional types can
 | Storage corruption | Integrity check | Rebuild from provenance chain. |
 | Cycle in temporal validity | Validator | Reject, log. |
 | Substrate archived upstream | Integrity check | Use LadybugDB fork. |
+| Graph substrate unavailable | Integrity check | Use LadybugDB (default) or Neo4j (enterprise fallback) |
 
 ## Metrics
 

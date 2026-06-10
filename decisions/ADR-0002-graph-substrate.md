@@ -8,6 +8,10 @@ The original Kuzu embedded graph database was archived in October 2025.
 Its on-disk format was never stable across minor releases, directly
 violating SELF's Article IX (Continuity) requirement.
 
+**Revision 1.1** (2026-06-10)
+- Updated language to reflect LadybugDB as the default with Neo4j as enterprise fallback.
+- KuzuDB is archived; LadybugDB is the community-designated successor.
+
 ## Decision
 LadybugDB (github.com/LadybugDB/ladybug) is the default graph substrate.
 It is the community-designated successor to Kuzu, retains Cypher, columnar

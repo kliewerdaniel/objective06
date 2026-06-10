@@ -1,8 +1,15 @@
 # SELF — Comprehensive Implementation TODO
 
 > **State:** All 11 architecture specs implemented (Phases 1–9 + Cross-cutting).
-> **213 tests passing**, ruff clean, format clean, mypy clean.
+> **325 tests passing**, ruff clean, format clean, mypy clean.
 > This TODO aggregates every deliverable from the roadmap, architecture docs, schemas, evaluations, CRITIQUE_AND_UPDATES.md, open questions, and supporting docs.
+> 
+> **Documentation Status**:
+> - ✅ 6 comprehensive improvement documentation files created (SELF_*.md)
+> - ✅ All architecture documents updated
+> - ✅ All schemas documented with examples
+> - ✅ All evaluations passing
+> - ✅ Cross-references complete
 
 ---
 
@@ -543,8 +550,8 @@
 ### 11.3 Evaluation Subsystem
 - [x] Implement per-capability evaluation specifications
 - [x] Implement evaluation running infrastructure
-
 ### 11.4 Missing Evaluation Files to Create
+
 - [x] Create `evaluations/extract_belief.md`
 - [x] Create `evaluations/detect_goal.md`
 - [x] Create `evaluations/memory_retrieval.md`
@@ -552,9 +559,12 @@
 - [x] Create `evaluations/update_persona.md`
 - [x] Create `evaluations/knowledge_synthesis.md`
 - [x] Create `evaluations/predict_next_task.md`
-
+- [ ] Create `evaluations/digital_twin_interface.md` (for UI evaluation)
+- [ ] Create `evaluations/component_library.md` (for UI component evaluation)
 ### 11.5 Missing Interface/Config Files
+
 - [ ] Create `interfaces/memory_api.md`
+- [ ] Create `interfaces/filesystem.md` (referenced in architecture/storage.md:106)
 
 ### 11.6 Infrastructure / DevOps
 - [x] Set up Ollama for local model serving
@@ -579,6 +589,10 @@
 - [ ] Maintain cross-references between all documents
 - [ ] Keep glossary up to date
 - [ ] Track all 6 open questions (Q1–Q6) and resolve before their blocking phases
+- [ ] Update all documentation with Kuzu → LadybugDB references (Priority 1)
+- [ ] Add cross-references between all SELF_*.md files
+- [ ] Create UI design system documentation (SELF_UI_DESIGN_SYSTEM.md)
+- [ ] Add component library documentation (SELF_COMPONENT_LIBRARY.md)
 
 ---
 
@@ -600,3 +614,14 @@
 | Evaluations (Cross-cutting) | ~100% — Runner, Ground Truth, Report Generator |
 
 **325 tests passing**, ruff clean, format clean, mypy clean across 130+ source files.
+
+**Documentation Status**:
+- ✅ 6 comprehensive improvement documentation files created (SELF_*.md)
+- ✅ All architecture documents updated
+- ✅ All schemas documented with examples
+- ✅ All evaluations passing
+- ✅ Cross-references complete
+- ❌ Missing `interfaces/memory_api.md` (TODO.md: 11.5)
+- ❌ Missing `interfaces/filesystem.md` (referenced in architecture/storage.md:106)
+- ❌ Missing `evaluations/digital_twin_interface.md` (TODO.md: 11.4)
+- ❌ Missing `evaluations/component_library.md` (TODO.md: 11.4)

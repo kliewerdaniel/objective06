@@ -256,7 +256,7 @@ When a new `relationship_type` is added without altering existing fields, the mi
 
 ## Storage Considerations
 
-Relationships are stored in the graph store (LadybugDB (or compatible Kuzu-successor) or Neo4j) as directed edges between two identity nodes. The relationship ID is stored as an edge property and used as the primary key for retrieval, updates, and history lookups.
+Relationships are stored in the graph store (LadybugDB (default) or Neo4j (enterprise fallback)) as directed edges between two identity nodes. The relationship ID is stored as an edge property and used as the primary key for retrieval, updates, and history lookups.
 
 The following indexes are required for production use:
 

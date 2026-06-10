@@ -9,7 +9,7 @@ Phase 05 builds the Identity Graph, the core structured representation of the us
 
 ## Objectives
 - Implement the Identity Graph subsystem.
-- Integrate the Graph Database (LadybugDB (or compatible Kuzu-successor) or Neo4j).
+- Integrate the Graph Database (LadybugDB (default) or Neo4j (enterprise fallback)).
 - Implement the Temporal Index for "as of" and "during" queries.
 - Implement the Entity Resolver for merging and splitting nodes.
 - Implement the Merge Engine for handling identity changes.
@@ -17,7 +17,7 @@ Phase 05 builds the Identity Graph, the core structured representation of the us
 
 ## Deliverables
 - [ ] Identity Graph architecture and schema integration.
-- [ ] LadybugDB (or compatible Kuzu-successor) or Neo4j storage adapter.
+- [ ] LadybugDB (default) or Neo4j (enterprise fallback) storage adapter.
 - [ ] Temporal Index implementation.
 - [ ] Entity Resolver implementation.
 - [ ] Merge Engine implementation.

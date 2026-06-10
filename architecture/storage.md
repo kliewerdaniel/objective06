@@ -1,6 +1,6 @@
 # Storage Subsystem
 
-> The Storage subsystem defines the interfaces and implementations for the durable substrates of SELF: DuckDB for analytical state, LadybugDB (or compatible Kuzu-successor) or Neo4j for graph state, a vector database for semantic retrieval, and the filesystem for raw artifacts.
+> The Storage subsystem defines the interfaces and implementations for the durable substrates of SELF: DuckDB for analytical state, LadybugDB (default) or Neo4j (enterprise fallback) for graph state, a vector database for semantic retrieval, and the filesystem for raw artifacts.
 
 ---
 
@@ -11,7 +11,7 @@ The Storage subsystem is the substrate abstraction layer of SELF. It hides the d
 The Storage subsystem is also the place where substrate choices are made. SELF uses:
 
 - **DuckDB** for analytical queries over observation events and knowledge objects.
-- **LadybugDB (or compatible Kuzu-successor) or Neo4j** for the identity graph.
+- **LadybugDB (default) or Neo4j (enterprise fallback)** for the identity graph.
 - **A vector database** (FAISS, sqlite-vss, Qdrant, or compatible) for semantic retrieval.
 - **The filesystem** for raw artifacts, snapshots, configuration, and logs.
 
@@ -72,7 +72,7 @@ See `decisions/ADR-004-duckdb.md`.
 DuckDB must be opened by exactly one OS process. All subsystems within that process may hold separate connections (cursors) to the same DuckDB file. Cross-process access is not supported and will produce lock errors. The Orchestration layer is the process boundary; it owns the DuckDB connection pool.
 
 
-## Substrate: LadybugDB (or compatible Kuzu-successor)
+## Substrate: LadybugDB (default) or Neo4j (enterprise fallback)
 
 The graph store for the Identity Graph. It holds:
 
@@ -81,6 +81,31 @@ The graph store for the Identity Graph. It holds:
 - Temporal annotations.
 
 LadybugDB is the default. Neo4j is supported as an alternative. Note: The original Kuzu project is archived; LadybugDB is the community-designated successor. See https://github.com/LadybugDB/ladybug for installation. Either way, the graph store is accessed through the Identity Graph subsystem, not directly.
+
+### LadybugDB Installation
+
+To install LadybugDB (the recommended graph substrate):
+
+```bash
+# Clone the repository
+cd ~
+git clone https://github.com/LadybugDB/ladybug.git
+cd ladybug
+
+# Install dependencies
+pip install -e .
+
+# Test installation
+python -c "import ladybug; print('LadybugDB installed successfully')"
+```
+
+For Neo4j (enterprise fallback), install via:
+
+```bash
+# Download Neo4j from https://neo4j.com/download/
+# Extract and configure
+# Add Neo4j to PATH
+```
 
 ## Substrate: Vector Database
 

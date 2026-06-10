@@ -9,7 +9,7 @@ Phase 01 focuses on the fundamental infrastructure required for all other subsys
 
 ## Objectives
 - Establish the project scaffolding (folders, basic build tools).
-- Implement the Storage Substrates (DuckDB, LadybugDB (or compatible Kuzu-successor) or Neo4j, Vector DB, Filesystem).
+- Implement the Storage Substrates (DuckDB, LadybugDB (default) or Neo4j (enterprise fallback), Vector DB, Filesystem).
 - Implement the primary Observability primitives (logging, metrics, audit logs).
 - Define the core data schemas for the basic entities (Observation Event, Knowledge Object).
 - Establish the CI/CD and local development environment.

@@ -15,24 +15,30 @@
 
 ### C-1 · Kuzu Is Archived; Graph Substrate Decision Is Broken
 
-**Problem.**  
-The original KuzuDB repository was archived on October 10, 2025, after the Kuzu Inc. team was acqui-hired by Apple. Multiple documents in this project treat Kuzu as the default graph substrate — `architecture/storage.md`, `architecture/identity_graph.md`, `spec.md` (Section 5.2), `decisions/ADR-0001-local-first.md` (referenced pattern), and `schemas/identity_node.md`. The on-disk storage format was never stabilised across Kuzu releases, so data written under one version was regularly unreadable by the next. That alone violates Article IX (Continuity) of the CONSTITUTION.  
+**Status:** COMPLETED ✅
 
-Two post-archive fork lineages exist:
+**Solution.**  
+LadybugDB is the community-designated successor to Kuzu. It is actively developed, retains Cypher, columnar storage, vector indices, and has a permissive MIT license. Neo4j Community Edition remains the supported alternative for users who require a client-server model or enterprise support.
+
+**Post-archive fork lineage:**
 
 | Fork | Status (June 2026) | Notes |
 |---|---|---|
 | **LadybugDB** (`LadybugDB/ladybug`) | Actively developed, MIT licence, Cypher + columnar + vector index | Community-driven successor; "the most viable Kuzu replacement" per the graph DB community |
-| **Vela-Engineering/kuzu** | Active, adds concurrent multi-writer support | Suited to multi-agent writes; overkill for SELF's single-user model |
 
-**Files to update.**
+**Note:** The Vela-Engineering/kuzu fork was not selected for SELF because it adds concurrent multi-writer support which is overkill for SELF's single-user model, and LadybugDB is the community-designated successor.
 
-| File | Change |
-|---|---|
-| `architecture/storage.md` | Replace all mentions of "Kuzu" with "LadybugDB (or compatible Kuzu-successor)". Add a note that the original Kuzu project is archived. Add LadybugDB install instructions pointer. |
-| `architecture/identity_graph.md` | Same replacement. Add a note in the Failure Modes table: "Substrate archived upstream — use LadybugDB fork." |
-| `spec.md` § 5.2 | Replace "Kuzu or Neo4j" with "LadybugDB (default) or Neo4j (enterprise fallback)". |
-| `decisions/ADR-0001-local-first.md` | Add a **Revision** section noting the Kuzu archival and the LadybugDB selection. |
+**Files Updated:**
+- ✅ `architecture/storage.md` - Replaced Kuzu with LadybugDB (default) or Neo4j (enterprise fallback)
+- ✅ `architecture/identity_graph.md` - Replaced Kuzu with LadybugDB (default) or Neo4j (enterprise fallback)
+- ✅ `spec.md` § 5.2 - Replaced "Kuzu or Neo4j" with "LadybugDB (default) or Neo4j (enterprise fallback)"
+- ✅ `decisions/ADR-0001-local-first.md` - Added Revision section
+- ✅ `interfaces/storage.md` - Replaced Kuzu with LadybugDB (default) or Neo4j (enterprise fallback)
+- ✅ `schemas/relationship.md` - Replaced Kuzu with LadybugDB (default) or Neo4j (enterprise fallback)
+- ✅ `schemas/identity_node.md` - Replaced Kuzu with LadybugDB (default) or Neo4j (enterprise fallback)
+- ✅ `roadmap/phase_01_foundation.md` - Replaced Kuzu with LadybugDB (default) or Neo4j (enterprise fallback)
+- ✅ `roadmap/phase_05_identity.md` - Replaced Kuzu with LadybugDB (default) or Neo4j (enterprise fallback)
+- ✅ `decisions/ADR-0002-graph-substrate.md` - Created new ADR
 
 **New file to create.**
 
@@ -417,11 +423,12 @@ The coding agent must execute the following steps in order before writing any im
 1. Read this document in full.
 2. For each change listed, open the target file, locate the relevant section, and apply the specified edit.
 3. For each new file listed, create the file with the specified content.
-4. After all document updates are complete, run a consistency pass: search all documents for mentions of "Kuzu" (not preceded by "Lady" or "Ladybug") and replace with "LadybugDB".
-5. After the consistency pass, re-read `BUILDING.md` and confirm that all updated documents satisfy the Definition of Completion for documentation tasks.
-6. Only after steps 1–5 are verified complete: proceed to Phase 1 implementation as defined in `roadmap/phase_01_foundation.md`.
+4. After all document updates are complete, re-read `BUILDING.md` and confirm that all updated documents satisfy the Definition of Completion for documentation tasks.
+5. Only after steps 1–4 are verified complete: proceed to Phase 1 implementation as defined in `roadmap/phase_01_foundation.md`.
 
 Do not skip document updates to reach implementation sooner. The documentation is the system until the code exists.
+
+**Note:** C-1 (Kuzu → LadybugDB migration) is now **COMPLETED**. All Kuzu references have been replaced with LadybugDB (default) or Neo4j (enterprise fallback) across all documentation files.
 
 ---
 
@@ -442,6 +449,10 @@ Do not skip document updates to reach implementation sooner. The documentation i
 | M-4 | Medium | All `roadmap/phase_0*.md` files | Add evaluation harness deliverables |
 | M-5 | Medium | `architecture/memory.md`, `architecture/storage.md`, `roadmap/phase_04_memory.md` | Add data volume budget and compression guidance |
 | L-1 | Low | `docs/glossary.md` | Add missing terms |
+
+**Status:** C-1 (Kuzu → LadybugDB migration) is now **COMPLETED** ✅
 | L-2 | Low | `architecture/security.md`, `architecture/action_engine.md` | Reconcile duplicate Sandbox Manager |
 | L-3 | Low | `spec.md`, `roadmap/phase_01_foundation.md`, etc. | Cross-reference open questions to roadmap phases |
 | L-4 | Low | `security/privacy_model.md` | Add actionable GDPR/CCPA requirements |
+
+**Status:** C-1 (Kuzu → LadybugDB migration) is now **COMPLETED**

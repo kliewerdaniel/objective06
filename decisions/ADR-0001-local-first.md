@@ -10,7 +10,11 @@ SELF is designed as a personal cognitive infrastructure. The user's digital iden
 All components of SELF, including storage, models, and orchestration, must run on the user's local machine by default. No data shall leave the user's machine unless the user explicitly opts into a remote capability (e.g., a remote LLM or cloud-based search).
 
 **Revision**
-Due to the archival of the original KuzuDB project, LadybugDB is selected as the primary graph substrate for local-first operation.
+
+**Revision 1.1** (2026-06-10)
+- Updated graph substrate from Kuzu to LadybugDB as the default.
+- KuzuDB is archived; LadybugDB is the community-designated successor.
+- Neo4j remains as the enterprise fallback option.
 
 ## Consequences
 
