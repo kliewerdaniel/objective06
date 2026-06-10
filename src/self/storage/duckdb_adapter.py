@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -299,6 +300,21 @@ class DuckDBAdapter(StorageAPI):
                 updated_at VARCHAR NOT NULL
             );
         """,
+        "write_queue": """
+            CREATE TABLE IF NOT EXISTS write_queue (
+                schema_version VARCHAR NOT NULL,
+                id VARCHAR PRIMARY KEY,
+                record_type VARCHAR NOT NULL,
+                operation VARCHAR NOT NULL,
+                record_id VARCHAR NOT NULL,
+                data JSON NOT NULL,
+                priority INTEGER NOT NULL DEFAULT 1,
+                queued_at VARCHAR NOT NULL,
+                status VARCHAR NOT NULL DEFAULT 'pending',
+                completed_at VARCHAR,
+                error VARCHAR
+            );
+        """,
     }
 
     def __init__(
@@ -404,6 +420,8 @@ class DuckDBAdapter(StorageAPI):
         existing = self.get(record_type, id)
         if existing is None:
             return False
+        if not changes:
+            return False
         set_clause = ", ".join(f'"{k}" = ?' for k in changes)
         values = [self._serialize(v) for v in changes.values()] + [id]
         self._conn.execute(f'UPDATE "{table}" SET {set_clause} WHERE id = ?', values)
@@ -438,6 +456,103 @@ class DuckDBAdapter(StorageAPI):
         result = self._conn.execute(sql, params or []).fetchall()
         cols = [desc[0] for desc in self._conn.description] if self._conn.description else []
         return [dict(zip(cols, self._parse_row(row))) for row in result]
+
+    def _now_str(self) -> str:
+        """Get current timestamp as ISO string without pytz dependency."""
+        return datetime.now(UTC).isoformat()
+
+    def queue_write(
+        self,
+        record_type: str,
+        operation: str,
+        record_id: str,
+        data: dict[str, Any],
+        priority: int = 1,
+    ) -> str:
+        """
+        Enqueue a WRITE operation (UPDATE/DELETE) for serialization.
+        APPEND operations bypass the queue.
+
+        Args:
+            record_type: The type of record (e.g., 'knowledge_object')
+            operation: 'UPDATE' or 'DELETE'
+            record_id: ID of the record to modify
+            data: Changes to apply (for UPDATE) or data to delete (for DELETE)
+            priority: 1=HIGH, 2=MEDIUM, 3=LOW
+
+        Returns:
+            The ID of the queued write operation
+        """
+        if operation not in ("UPDATE", "DELETE"):
+            raise ValueError(f"Unsupported operation: {operation}")
+
+        write_record = {
+            "schema_version": "0.1.0",
+            "id": f"write_{record_type}_{record_id}_{self._serialize(data)}",
+            "record_type": record_type,
+            "operation": operation,
+            "record_id": record_id,
+            "data": data,
+            "priority": priority,
+            "queued_at": self._now_str(),
+            "status": "pending",
+        }
+        self.insert("write_queue", write_record)
+        return str(write_record["id"])
+
+    def process_write_queue(self, batch_size: int = 100) -> list[dict[str, Any]]:
+        """
+        Process pending writes from the queue (serializing UPDATE/DELETE).
+        Returns the processed write records.
+        """
+        spec = {"status": "pending", "limit": batch_size, "order_by": "priority"}
+        writes = self.query("write_queue", spec)
+
+        processed = []
+        for write in writes:
+            record_type = write["record_type"]
+            record_id = write["record_id"]
+            operation = write["operation"]
+            data = write["data"]
+
+            try:
+                if operation == "UPDATE":
+                    self.update(record_type, record_id, data)
+                elif operation == "DELETE":
+                    self.delete(record_type, record_id)
+
+                # Mark as processed
+                self.update(
+                    "write_queue",
+                    write["id"],
+                    {"status": "completed", "completed_at": self._now_str()},
+                )
+                processed.append(write)
+            except Exception as e:
+                # Mark as failed and log error
+                self.update(
+                    "write_queue",
+                    write["id"],
+                    {"status": "failed", "error": str(e), "failed_at": self._now_str()},
+                )
+                processed.append(write)
+
+        return processed
+
+    def get_pending_writes(self, priority: int | None = None) -> list[dict[str, Any]]:
+        """
+        Get pending writes, optionally filtered by priority.
+        """
+        if priority is not None:
+            spec = {
+                "status": "pending",
+                "priority": priority,
+                "limit": 100,
+                "order_by": "queued_at",
+            }
+        else:
+            spec = {"status": "pending", "limit": 100, "order_by": "priority"}
+        return self.query("write_queue", spec)
 
     @staticmethod
     def _serialize(v: Any) -> Any:

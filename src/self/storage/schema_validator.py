@@ -199,6 +199,17 @@ class SchemaValidator:
             "created_at",
             "updated_at",
         },
+        "write_queue": {
+            "schema_version",
+            "id",
+            "record_type",
+            "operation",
+            "record_id",
+            "data",
+            "priority",
+            "queued_at",
+            "status",
+        },
     }
 
     VERSIONED_TYPES = {

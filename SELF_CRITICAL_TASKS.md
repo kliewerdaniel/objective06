@@ -164,7 +164,9 @@ open-design create-project self-ui --name "SELF UI Design System"
 2. **SELF_IMPLEMENTATION_PLAN.md** - Detailed implementation guide
 3. **SELF_IMPROVEMENT_SUMMARY.md** - Quick reference guide
 4. **SELF_QUICK_GUIDE.md** - Concise implementation guide
-5. **TODO.md** - Updated task tracking
+5. **SELF_CRITICAL_TASKS.md** - Priority matrix
+6. **SELF_IMPLEMENTATION_PRIORITY.md** - Implementation priority matrix
+7. **TODO.md** - Updated task tracking
 
 ## Next Steps
 

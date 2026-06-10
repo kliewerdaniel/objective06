@@ -548,13 +548,135 @@ Each task includes:
 - All services start
 - Application is accessible
 
+### Task 12: Create Installation Script
+
+**Objective**: Create installation script with first-run wizard
+
+**Implementation Steps**:
+
+```bash
+# Create installation script
+cat > scripts/install.sh << 'EOF'
+#!/bin/bash
+set -e
+
+echo "Installing SELF..."
+
+# Check for Python 3.14+
+if ! command -v python3 &> /dev/null; then
+    echo "Python 3.14+ is required but not installed."
+    exit 1
+fi
+
+# Check Python version
+python_version=$(python3 -c "import sys; print('.'.join(map(str, sys.version_info[:2])))")
+if [[ $(echo "$python_version < 3.14" | bc -l) -eq 1 ]]; then
+    echo "Python 3.14+ is required but found version $python_version."
+    exit 1
+fi
+
+# Check for Ollama
+echo "Checking for Ollama..."
+if ! command -v ollama &> /dev/null; then
+    echo "Ollama is required but not installed."
+    echo "Please install Ollama from https://ollama.ai"
+    exit 1
+fi
+
+# Create directories
+mkdir -p ~/.config/self
+mkdir -p ~/.local/share/self
+
+# Create default config
+cat > ~/.config/self/config.yaml << 'CONFIGEOF'
+# Default SELF configuration
+observer:
+  sources:
+    - type: filesystem
+      path: "~/Documents"
+    - type: git
+      path: "~/projects"
+    - type: github
+      token: "[SET_YOUR_TOKEN]"
+    - type: rss
+      feeds:
+        - "https://example.com/feed.xml"
+    - type: email
+      provider: "gmail"
+      credentials_file: "~/.config/self/email_credentials.json"
+    - type: browser
+      history_file: "~/.config/google-chrome/Default/History"
+    - type: terminal
+      session_dir: "~/terminal_sessions"
+    - type: calendar
+      provider: "google"
+      credentials_file: "~/.config/self/calendar_credentials.json"
+
+extraction:
+  model: "llama3.2"
+  max_tokens: 2000
+  temperature: 0.1
+
+storage:
+  duckdb_path: "~/.local/share/self/self.duckdb"
+  vector_db_path: "~/.local/share/self/self_vector.db"
+
+persona_engine:
+  embedding_model: "nomic-embed-text"
+  update_frequency: "daily"
+  decay_rate: 0.95
+
+action_engine:
+  sandbox_path: "~/.local/share/self/sandbox"
+  max_actions_per_session: 10
+  confirmation_required: true
+
+synthesis:
+  summary_schedule:
+    daily: "08:00"
+    weekly: "Monday 08:00"
+  summary_types:
+    - daily
+    - weekly
+    - topic
+    - project
+
+security:
+  enable_prompt_injection_filter: true
+  enable_audit_logging: true
+  audit_log_path: "~/.local/share/self/audit.log"
+
+# End of config
+CONFIGEOF
+
+echo "Configuration created at ~/.config/self/config.yaml"
+echo "Please edit the configuration file and set your API tokens."
+echo ""
+echo "Next steps:"
+echo "1. Set up your source adapters (GitHub, email, etc.)"
+echo "2. Start Ollama: ollama serve"
+echo "3. Run SELF: python -m self"
+
+echo ""
+echo "SELF installation complete!"
+EOF
+
+chmod +x scripts/install.sh
+```
+
+**Verification**:
+- Installation script runs successfully
+- All checks pass
+- Configuration is created
+- User is guided through setup
+
 ## Implementation Order
 
 ### Priority Order:
 1. **Critical Fixes** (Tasks 1-3) - Weeks 1-2
 2. **UI Design** (Tasks 4-7) - Weeks 3-8
 3. **Documentation** (Tasks 8-9) - Weeks 9-10
-4. **DevOps** (Tasks 10-11) - Weeks 11-12
+4. **DevOps** (Tasks 10-12) - Weeks 11-12
 
 ### Dependencies:
 - Task 1 depends on: Understanding of Kuzu vs LadybugDB
@@ -568,6 +690,7 @@ Each task includes:
 - Task 9 depends on: Understanding of schema structure
 - Task 10 depends on: Understanding of CI/CD best practices
 - Task 11 depends on: Understanding of Docker best practices
+- Task 12 depends on: Understanding of installation best practices
 
 ## Success Criteria
 

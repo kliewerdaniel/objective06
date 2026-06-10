@@ -37,6 +37,25 @@ class DigitalTwin:
         session = self._session_manager.get_session(sid)
         route_result = self._router.route(intent, query, (session or {}).get("context"))
         answer = self._composer.compose(query, intent, route_result)
+
+        # Layer 3: Citation-lock validation
+        knowledge = route_result.get("knowledge", [])
+        if not answer.get("safe", True):
+            return answer
+
+        citation_check = self._sanitizer.validate_citations(answer["text"], knowledge)
+        if not citation_check["safe"]:
+            reason = citation_check["reason"]
+            return {
+                "answer_id": answer.get("answer_id"),
+                "text": (
+                    "I'm sorry, but my response contains references that were not "
+                    f"provided in the context. {reason}"
+                ),
+                "citations": "",
+                "confidence": 0.0,
+            }
+
         answer["intent"] = intent
         answer["session_id"] = sid
         self._session_manager.add_turn(sid, query, answer)
