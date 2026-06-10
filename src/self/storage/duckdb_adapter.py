@@ -335,23 +335,24 @@ class DuckDBAdapter(StorageAPI):
             return []
         conditions: list[str] = []
         params: list[Any] = []
-        order_col = "timestamp DESC"
+        order_col = self._get_default_order_column(table)
         for key, value in spec.items():
             if key in ("limit", "offset", "order_by"):
                 if key == "order_by":
                     order_map = {
                         "priority": "priority ASC",
-                        "timestamp": "timestamp DESC",
+                        "timestamp": f"{self._get_timestamp_column(table)} DESC",
                         "queued_at": "queued_at ASC",
-                        "persona_snapshot": "timestamp DESC",
+                        "persona_snapshot": f"{self._get_timestamp_column(table)} DESC",
+                        "created_at": "created_at DESC",
                     }
-                    order_col = order_map.get(str(value), "timestamp DESC")
+                    order_col = order_map.get(str(value), order_col)
                 continue
             if key == "time_start":
-                conditions.append("timestamp >= ?")
+                conditions.append(f"{self._get_timestamp_column(table)} >= ?")
                 params.append(value)
             elif key == "time_end":
-                conditions.append("timestamp <= ?")
+                conditions.append(f"{self._get_timestamp_column(table)} <= ?")
                 params.append(value)
             elif key == "tags" and isinstance(value, list):
                 conditions.append(" OR ".join("tags::VARCHAR LIKE ?" for _ in value))
@@ -371,6 +372,15 @@ class DuckDBAdapter(StorageAPI):
             self._migration_engine.migrate_if_needed(dict(zip(cols, self._parse_row(row))), "0.1.0")
             for row in result
         ]
+
+    def _get_timestamp_column(self, table: str) -> str:
+        tables_with_timestamp = {"audit_log_entry", "event_log_entry", "observation_event"}
+        if table in tables_with_timestamp:
+            return "timestamp"
+        return "created_at"
+
+    def _get_default_order_column(self, table: str) -> str:
+        return f"{self._get_timestamp_column(table)} DESC"
 
     def insert(self, record_type: str, record: dict[str, Any]) -> str:
         if record_type not in self.SCHEMAS:

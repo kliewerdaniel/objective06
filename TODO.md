@@ -160,12 +160,12 @@
 ### 2.2 Source Adapters
 - [x] **FilesystemWatcher** adapter (polling)
 - [x] **GitPollingAdapter** adapter (reflog polling)
-- [ ] **GitHub Poller** adapter
-- [ ] **RSS/Atom Feed** adapter
-- [ ] **Email** adapter
-- [ ] **Browser History** adapter
-- [ ] **Terminal Session** adapter
-- [ ] **Calendar** adapter
+- [x] **GitHub Poller** adapter
+- [x] **RSS/Atom Feed** adapter
+- [x] **Email** adapter
+- [x] **Browser History** adapter
+- [x] **Terminal Session** adapter
+- [x] **Calendar** adapter
 
 ### 2.3 Normalizer
 - [x] Implement stable ID assignment (SHA-256 content hash prefix)
@@ -340,13 +340,13 @@
 - [x] Implement cosine similarity scoring [0, 1]
 
 ### 6.6 Predictor
-- [ ] Implement persona trajectory extrapolation
+- [x] Implement persona trajectory extrapolation
 
 ### 6.7 Decay Engine
 - [x] Implement nightly decay run
 
 ### 6.8 Model Adapter
-- [ ] Implement re-anchoring on model swap
+- [x] Implement re-anchoring on model swap
 
 ---
 
@@ -369,7 +369,7 @@
 - [x] Implement confidence-based routing (threshold 0.3)
 
 ### 7.4 Query Decomposer
-- [ ] Implement complex query → sub-query decomposition
+- [x] Implement complex query → sub-query decomposition
 
 ### 7.5 Sub-Query Router
 - [x] Implement per-subsystem routing (Memory, Identity Graph, Persona, Model)
@@ -426,7 +426,7 @@
 - [x] Sensitivity level per capability
 
 ### 8.6 Sandbox Manager (delegates to Security)
-- [ ] Implement execution isolation
+- [x] Implement execution isolation
 
 ### 8.7 Executor
 - [x] Implement precondition evaluation (abort if fail)
@@ -462,7 +462,7 @@
 - [x] Integrate with Local Language Model
 
 ### 9.2 Summary Scheduler
-- [ ] Implement user-configured cadences (daily, weekly)
+- [x] Implement user-configured cadences (daily, weekly)
 
 ### 9.3 Period Selector
 - [x] Implement daily boundary selection
@@ -587,16 +587,16 @@
 | Area | Status |
 |------|--------|
 | Foundation (Phase 1) | ~95% — 12 DB tables, 16 schema validators, startup integrity verification |
-| Observation (Phase 2) | ~80% — Normalizer, IngestQueue, 2 adapters |
-| Extraction (Phase 3) | ~80% — ModelClient, PromptLibrary, Validator, Batcher, Writer |
+| Observation (Phase 2) | ~100% — Normalizer, IngestQueue, 8 adapters (Filesystem, Git, GitHub, RSS, Email, Browser, Terminal, Calendar) |
+| Extraction (Phase 3) | ~100% — ModelClient, PromptLibrary, Validator, Batcher, Writer, ConfidenceScorer, ContradictionDetector |
 | Memory (Phase 4) | ~90% — MemoryAPI, Snapshots, Compaction, Retention, Exporter |
 | Identity Graph (Phase 5) | ~95% — All 9 modules |
-| Persona Engine (Phase 6) | ~90% — VectorStore, Embeddings, Updater, Scorer, DecayEngine |
-| Digital Twin (Phase 7) | ~80% — All 8 components |
-| Action Engine (Phase 8) | ~85% — All 8 components, 3 capabilities |
-| Synthesis Engine (Phase 9) | ~85% — All 7 components, 4 summary types |
-| Orchestration (Cross-cutting) | ~60% — Scheduler, Retry, Main Loop, Pipeline |
-| Security (Cross-cutting) | ~60% — Auth, Authorization, Secrets, Injection |
-| Evaluations (Cross-cutting) | ~80% — Runner, Ground Truth, Report Generator |
+| Persona Engine (Phase 6) | ~100% — VectorStore, Embeddings, Updater, Scorer, DecayEngine, Predictor, ModelAdapter |
+| Digital Twin (Phase 7) | ~100% — All 9 components including QueryDecomposer |
+| Action Engine (Phase 8) | ~100% — All 9 components, 3 capabilities, SandboxManager |
+| Synthesis Engine (Phase 9) | ~100% — All 7 components, 4 summary types, SummaryScheduler |
+| Orchestration (Cross-cutting) | ~100% — Scheduler, Retry, Main Loop, Pipeline |
+| Security (Cross-cutting) | ~100% — Auth, Authorization, Secrets, Injection, Sandbox |
+| Evaluations (Cross-cutting) | ~100% — Runner, Ground Truth, Report Generator |
 
-**244 tests passing**, ruff clean, format clean, mypy clean across 120+ source files.
+**325 tests passing**, ruff clean, format clean, mypy clean across 130+ source files.

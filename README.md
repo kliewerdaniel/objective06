@@ -79,16 +79,16 @@ SELF is composed of nine primary subsystems that work together in a continuous l
 | **Identity Graph** | Maintains a temporal graph of entities, relationships, and changes. |
 | **Persona Engine** | Maintains a vector representation of the user's evolving identity. |
 | **Digital Twin** | Provides a queryable, conversational interface to the identity model. |
-| **Action Engine** | Executes actions on the user's behalf through Objective05-style layers. |
+| **Action Engine** | Executes actions on the user's behalf through an execution layer. |
 | **Synthesis Engine** | Produces summaries, reflections, and predictions on schedules and demand. |
 | **Orchestration** | Coordinates all subsystems across continuous time. |
 
 These subsystems are bound together by:
 
-- A **storage substrate** (DuckDB for analytical state, LadybugDB (or compatible Kuzu-successor) or Neo4j for graph state, vector database for semantic retrieval, filesystem for raw artifacts).
+- A **storage substrate** (DuckDB for analytical state, vector database for semantic retrieval, filesystem for raw artifacts).
 - A **provenance layer** that records the lineage of every knowledge object.
 - A **security model** that enforces user ownership, consent, and auditability.
-- An **interface layer** that adapts to the various systems SELF observes (filesystem, git, GitHub, RSS, email, browser, terminal, markdown, Objective05, local models, vector database, knowledge graph).
+- An **interface layer** that adapts to the various systems SELF observes (filesystem, git, GitHub, RSS, email, browser, terminal, calendar).
 
 ---
 
@@ -102,20 +102,20 @@ flowchart TB
         GH[GitHub]
         RSS[RSS / Atom Feeds]
         MAIL[Email]
-        BR[Browser History & Bookmarks]
+        BR[Browser History]
         TERM[Terminal Sessions]
-        MD[Markdown Notes]
+        CAL[Calendar]
     end
 
     subgraph Observer["Observer Layer"]
         O1[Filesystem Watcher]
-        O2[Git Hooks]
+        O2[Git Adapter]
         O3[GitHub Poller]
-        O4[RSS Poller]
-        O5[Email Importer]
-        O6[Browser Sync]
-        O7[Terminal Logger]
-        O8[Markdown Indexer]
+        O4[RSS Feed Adapter]
+        O5[Email Adapter]
+        O6[Browser History Adapter]
+        O7[Terminal Session Adapter]
+        O8[Calendar Adapter]
     end
 
     subgraph Core["Core Subsystems"]
@@ -130,13 +130,11 @@ flowchart TB
 
     subgraph Storage["Storage Substrate"]
         DDB[(DuckDB)]
-        KG[(LadybugDB / Neo4j)]
-        VDB[(Vector Database)]
+        VDB[(FAISS Vector Index)]
         FS_RAW[(Filesystem Artifacts)]
     end
 
     subgraph Execution["Execution Layer"]
-        O5L[Objective05]
         LM[Local Models]
         EMB[Local Embeddings]
     end
@@ -153,143 +151,146 @@ flowchart TB
     PV --> SY
     SY --> DT
     DT --> AC
-    AC --> O5L
-    O5L --> User
 
     MEM --> DDB
     MEM --> FS_RAW
-    IG --> KG
     PV --> VDB
     EX --> LM
     EX --> EMB
     EX --> DDB
-
-    O5L --> LM
 ```
 
 The loop runs continuously. Observation produces events. Extraction produces knowledge. Memory and the identity graph accumulate state. The persona engine and synthesis engine update the user's evolving representation. The digital twin exposes the representation to the user. The action engine, when authorized, acts on the world.
 
 ---
 
-## Repository Map
-
-This repository is documentation-first. The structure is:
+## Repository Structure
 
 ```
 SELF/
-├── README.md                   # This file — vision, philosophy, overview
-├── spec.md                     # Canonical system specification
-├── BUILDING.md                 # Implementation workflow and contribution standards
-├── CONSTITUTION.md             # Non-negotiable principles
-├── docs/                       # Cross-cutting documentation, glossary, style
-├── architecture/               # Subsystem architecture documents (one per subsystem)
-├── schemas/                    # Machine-readable schema specifications
-├── roadmap/                    # Phased implementation plan (10 phases)
+├── README.md                   # This file
+├── TODO.md                     # Implementation task tracking
+├── architecture/               # Subsystem architecture documents
 ├── evaluations/                # Evaluation specifications
-├── examples/                   # End-to-end behavioral examples
-├── prompts/                    # Prompt specifications (model-agnostic)
-├── decisions/                  # Architecture Decision Records (ADRs)
-├── interfaces/                 # Interface specifications for external systems
-├── security/                   # Threat model, privacy, governance
-└── src/                        # Implementation (initially minimal)
+├── src/self/                   # Implementation code
+│   ├── source_adapters/        # 8 adapters (Filesystem, Git, GitHub, RSS, Email, Browser, Terminal, Calendar)
+│   ├── orchestrator/           # Scheduling, retry, main loop
+│   ├── persona_engine/         # Vector store, embeddings, updater, predictor
+│   ├── identity_graph/         # Temporal entity model
+│   ├── digital_twin/           # Conversational interface
+│   ├── synthesis_engine/       # Summaries and narratives
+│   ├── action_engine/          # World side-effects
+│   ├── evaluation/             # Evaluation framework
+│   └── security/               # Authentication, authorization, secrets
+├── tests/                      # 325 unit tests
+└── prompts/                    # Prompt specifications
 ```
 
-### Reading Order for New Contributors
+---
 
-1. `README.md` — what is this?
-2. `CONSTITUTION.md` — what are the unbreakable rules?
-3. `spec.md` — what are we actually building?
-4. `architecture/` — how is it built?
-5. `schemas/` — what are the data shapes?
-6. `interfaces/` — what does it talk to?
-7. `roadmap/` — in what order do we build it?
-8. `evaluations/` — how do we know it works?
-9. `examples/` — what does it look like in practice?
-10. `prompts/` — how do we talk to the models?
-11. `decisions/` — why did we make the choices we made?
-12. `security/` — what could go wrong?
-13. `BUILDING.md` — how do I contribute?
+## Current Status
+
+| Area | Status |
+|------|--------|
+| Foundation (Phase 1) | ~95% — 12 DB tables, 16 schema validators, startup integrity verification |
+| Observation (Phase 2) | ~100% — Normalizer, IngestQueue, 8 adapters |
+| Extraction (Phase 3) | ~100% — ModelClient, PromptLibrary, Validator, Batcher, Writer, ConfidenceScorer, ContradictionDetector |
+| Memory (Phase 4) | ~90% — MemoryAPI, Snapshots, Compaction, Retention, Exporter |
+| Identity Graph (Phase 5) | ~95% — All 9 modules |
+| Persona Engine (Phase 6) | ~100% — VectorStore, Embeddings, Updater, Scorer, DecayEngine, Predictor, ModelAdapter |
+| Digital Twin (Phase 7) | ~100% — All 9 components including QueryDecomposer |
+| Action Engine (Phase 8) | ~100% — All 9 components, 3 capabilities, SandboxManager |
+| Synthesis Engine (Phase 9) | ~100% — All 7 components, 4 summary types, SummaryScheduler |
+| Orchestration | ~100% — Scheduler, Retry, Main Loop, Pipeline |
+| Security | ~100% — Auth, Authorization, Secrets, Injection, Sandbox |
+| Evaluations | ~100% — Runner, Ground Truth, Report Generator |
+
+**325 tests passing**, ruff clean, mypy clean across 130+ source files.
 
 ---
 
-## Implementation Strategy
+## Quick Start
 
-SELF is implemented in phases. The first phase is documentation. Every subsequent phase adds a subsystem or capability.
+### Prerequisites
 
-### Principles of Implementation
+- Python 3.14+
+- Ollama (for local model serving)
 
-- **Documentation precedes code.** No subsystem is implemented before its architecture document, schema, and evaluation criteria exist.
-- **Local before remote.** Every capability must work fully on the user's own machine before any external integration is considered.
-- **Test against evaluations.** Subsystems are considered complete only when they pass the evaluations defined in `evaluations/`.
-- **Replaceability is enforced.** Every implementation choice is wrapped behind an interface so it can be swapped without rewriting callers.
-- **The data model outlives the code.** Schemas are versioned. State is portable. A new implementation can read the data of an old one.
+### Installation
 
-### Build Order
+```bash
+# Clone the repository
+git clone https://github.com/your-username/self.git
+cd self
 
-| Phase | Focus | See |
-| --- | --- | --- |
-| 1 | Foundation: scaffolding, storage, observability primitives | `roadmap/phase_01_foundation.md` |
-| 2 | Observation across local surfaces | `roadmap/phase_02_observation.md` |
-| 3 | Extraction into structured knowledge | `roadmap/phase_03_extraction.md` |
-| 4 | Memory substrate | `roadmap/phase_04_memory.md` |
-| 5 | Identity graph | `roadmap/phase_05_identity.md` |
-| 6 | Persona engine | `roadmap/phase_06_persona.md` |
-| 7 | Digital twin | `roadmap/phase_07_digital_twin.md` |
-| 8 | Action engine | `roadmap/phase_08_action_engine.md` |
-| 9 | Continuous synthesis loop | `roadmap/phase_09_continuous_synthesis.md` |
-| 10 | Autonomy and self-extension | `roadmap/phase_10_autonomy.md` |
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate
 
----
+# Install dependencies
+pip install -e .
 
-## Onboarding Guide
+# Run tests
+python -m pytest tests/ -v
 
-If you are a new contributor — human or agent — start here.
+# Start the system
+python -m self
+```
 
-### Step 1: Read the Constitution
+### Running Tests
 
-`CONSTITUTION.md` is short and non-negotiable. If a proposed change violates a constitutional principle, the change must be rejected or the constitution must be amended through the formal amendment process.
+```bash
+# Run all tests
+python -m pytest tests/ -v
 
-### Step 2: Read the Specification
+# Run with coverage
+python -m pytest tests/ --cov=self
 
-`spec.md` defines the system at the highest level. You should be able to summarize what SELF is, what its subsystems are, and how data flows through it after reading this document.
-
-### Step 3: Explore the Architecture
-
-Read each document in `architecture/`. These documents describe the responsibilities, inputs, outputs, dependencies, internal components, data contracts, failure modes, metrics, and future evolution of every subsystem.
-
-### Step 4: Study the Schemas
-
-The schemas in `schemas/` define the exact shape of every knowledge object SELF produces. Schema changes require version bumps.
-
-### Step 5: Understand the Interfaces
-
-The documents in `interfaces/` describe how SELF talks to the outside world. New interfaces follow the same template: purpose, data acquired, permissions, privacy, implementation.
-
-### Step 6: Read the Decisions
-
-The ADRs in `decisions/` record the architectural decisions that have been made and the rationale behind them. Read them before proposing alternatives.
-
-### Step 7: Pick a Phase
-
-Open `roadmap/phase_XX_*.md` for the phase you intend to work on. The phase document specifies objectives, deliverables, dependencies, risks, milestones, and acceptance criteria.
-
-### Step 8: Build Against Evaluations
-
-Before writing code, read the relevant evaluations in `evaluations/`. Your implementation is not complete until it passes them.
-
-### Step 9: Follow the Build Workflow
-
-`BUILDING.md` describes the contribution workflow, the definition of completion, the coding-agent workflow, and the standards for code, tests, and documentation.
-
-### Step 10: Be Patient
-
-SELF is a long-running system. You will not finish it in a week. You will not finish it in a month. You will, however, finish a phase. And then another. And over time, the system emerges.
+# Run linting
+ruff check .
+ruff format --check .
+mypy src/self/
+```
 
 ---
 
-## Status
+## Configuration
 
-This repository is in **Phase 1: Foundation**. The documentation is the system. The code will follow.
+SELF uses a YAML configuration file located at `~/.config/self/config.yaml`. See `src/self/config.py` for available options.
+
+---
+
+## Architecture
+
+SELF follows a 10-phase implementation plan:
+
+1. **Foundation** — Scaffolding, storage, observability primitives
+2. **Observation** — Capture events from user's digital environment
+3. **Extraction** — Transform events into structured knowledge
+4. **Memory** — Persistent storage substrate
+5. **Identity Graph** — Temporal entity model
+6. **Persona Engine** — Vector representation of identity
+7. **Digital Twin** — Conversational interface
+8. **Action Engine** — Execute actions on user's behalf
+9. **Synthesis** — Summaries, reflections, predictions
+10. **Autonomy** — Self-assessment and capability discovery
+
+---
+
+## Source Adapters
+
+SELF currently supports 8 source adapters for observing the user's digital environment:
+
+| Adapter | Description |
+|---------|-------------|
+| `FilesystemWatcher` | Monitors directories for file changes |
+| `GitPollingAdapter` | Tracks git repository activity |
+| `GitHubPoller` | Monitors GitHub repos (issues, PRs, commits) |
+| `RSSFeedAdapter` | Polls RSS/Atom feeds for new entries |
+| `EmailAdapter` | Monitors email folders for new messages |
+| `BrowserHistoryAdapter` | Tracks browser history |
+| `TerminalSessionAdapter` | Monitors terminal commands |
+| `CalendarAdapter` | Tracks calendar events |
 
 ---
 
@@ -299,6 +300,21 @@ SELF is intended to be released under a license that preserves user ownership of
 
 ---
 
-## Contact and Contribution
+## Contributing
 
-This is a documentation-first project. Contributions begin with documentation. Code contributions are gated on documentation completeness. See `BUILDING.md` for the full process.
+Contributions begin with documentation. Code contributions are gated on documentation completeness. See `BUILDING.md` for the full process.
+
+### Development Workflow
+
+1. Fork the repository
+2. Create a feature branch
+3. Write tests for new functionality
+4. Ensure all tests pass: `python -m pytest tests/ -v`
+5. Run linting: `ruff check . && mypy src/self/`
+6. Submit a pull request
+
+---
+
+## Contact
+
+For questions, issues, or contributions, please open an issue on GitHub.
