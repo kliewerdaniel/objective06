@@ -27,6 +27,7 @@ class KnowledgeWriter:
         producer: str = "extractor",
         producer_version: str = "0.1.0",
         reasoning: str = "",
+        entity_id: str | None = None,
     ) -> str:
         now = datetime.now(UTC)
         ko_id = f"ko_{uuid4().hex}"
@@ -40,6 +41,7 @@ class KnowledgeWriter:
                 "content": content,
                 "source_event_ids": source_event_ids or [],
                 "reasoning": reasoning,
+                "entity_id": entity_id,
                 **(attributes or {}),
             },
             "confidence": max(0.0, min(1.0, confidence)),

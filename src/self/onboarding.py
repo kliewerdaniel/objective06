@@ -71,6 +71,10 @@ class OnboardingFlow:
         event["content_hash"] = f"sha256:{hashlib.sha256(raw.encode()).hexdigest()}"
 
         self._storage.insert("observation_event", event)
+
+        if self._persona_engine:
+            self._persona_engine.seed_from_onboarding(event["payload"]["data"])
+
         return event
 
     @staticmethod
@@ -80,5 +84,26 @@ class OnboardingFlow:
 
     @staticmethod
     def should_defer_synthesis(storage: Any) -> bool:
-        result = storage.query("observation_event", {"limit": 1000})
-        return len(result) < 100
+        """Check if synthesis should be deferred based on onboarding date."""
+        result = storage.query("observation_event", {"event_type": "system.onboarding", "limit": 1})
+        if not result:
+            return True  # No onboarding found, defer synthesis
+
+        onboarding_event = result[0]
+        timestamp_str = onboarding_event.get("timestamp", "").replace("Z", "+00:00")
+        onboarding_time = datetime.fromisoformat(timestamp_str)
+        now = datetime.now(UTC)
+        days_since_onboarding = (now - onboarding_time).days
+
+        # Defer synthesis for 7 days after onboarding
+        return days_since_onboarding < 7
+
+    @staticmethod
+    def get_onboarding_date(storage: Any) -> datetime | None:
+        """Get the date when onboarding was completed."""
+        result = storage.query("observation_event", {"event_type": "system.onboarding", "limit": 1})
+        if not result:
+            return None
+
+        onboarding_event = result[0]
+        return datetime.fromisoformat(onboarding_event.get("timestamp", "").replace("Z", "+00:00"))

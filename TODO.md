@@ -46,13 +46,13 @@
 
 #### H-1 · Embedding Model Lineage
 - [x] Verify `architecture/persona_engine.md` has `model_lineage_id` pinned-model constraint
-- [ ] Implement `model_lineage_id` validation in code
+- [x] Implement `model_lineage_id` validation in code
 
 #### H-2 · Audit Log Hash-Chain Integrity
 - [x] Implement SHA-256 `prev_hash` chaining in audit log entries
 - [x] Implement `audit_head.sha256` file with atomic updates
-- [ ] Implement startup integrity verification
-- [ ] Implement on-demand integrity check query
+- [x] Implement startup integrity verification
+- [x] Implement on-demand integrity check query
 
 #### H-3 · Bitemporal Modeling
 - [x] Verify `architecture/identity_graph.md` has bitemporal index description
@@ -64,7 +64,7 @@
 - [x] Verify `architecture/synthesis_engine.md` has archived-object exclusion
 - [x] Implement Relevance Scorer in CompactionEngine
 - [x] Implement tier transitions (hot→cold→archive) in CompactionEngine
-- [ ] Implement nightly Decay Engine
+- [x] Implement nightly Decay Engine
 
 ### 0.4 Fix Medium-Severity Issues
 
@@ -74,8 +74,8 @@
 
 #### M-2 · Onboarding / Cold-Start Procedure
 - [x] Implement onboarding flow: collect self-description, emit `system.onboarding` event
-- [ ] Implement seed persona vector generation from onboarding event
-- [ ] Implement deferred synthesis until ≥7 days or user request
+- [x] Implement seed persona vector generation from onboarding event
+- [x] Implement deferred synthesis until ≥7 days or user request
 
 #### M-3 · Objective05 Interface
 - [x] Implement Objective05 plan structure in Action Engine (pre/postconditions, rollback)
@@ -121,8 +121,8 @@
 - [x] Implement hash-chain integrity (SHA-256 `prev_hash`)
 - [x] Implement `audit_head.sha256` atomic file updates
 - [x] Implement queryable audit log (by actor, action, time, entity)
-- [ ] Implement startup integrity verification
-- [ ] Implement on-demand integrity check
+- [x] Implement startup integrity verification
+- [x] Implement on-demand integrity check
 
 ### 1.5 Metrics & Health Reporting
 - [x] Implement metrics collection infrastructure
@@ -138,7 +138,7 @@
 ### 1.7 Onboarding Flow
 - [x] Implement structured self-description collection
 - [x] Implement seed `system.onboarding` observation event
-- [ ] Implement seed persona vector from onboarding event
+- [x] Implement seed persona vector from onboarding event
 
 ### 1.8 Unit Tests — Storage & Observability
 - [x] Unit tests for DuckDBAdapter (CRUD, query)
@@ -154,8 +154,8 @@
 ### 2.1 Observer Subsystem Architecture
 - [x] Implement Observer main component
 - [x] Implement HealthMonitor per adapter
-- [ ] Integrate with Orchestration for scheduling/lifecycle
-- [ ] Integrate with Security for permission checks and secrets
+- [x] Integrate with Orchestration for scheduling/lifecycle
+- [x] Integrate with Security for permission checks and secrets
 
 ### 2.2 Source Adapters
 - [x] **FilesystemWatcher** adapter (polling)
@@ -190,9 +190,9 @@
 ### 3.1 Extractor Subsystem Architecture
 - [x] Implement Extractor main component
 - [x] Integrate with Memory (read events, write knowledge)
-- [ ] Integrate with Identity Graph (entity resolution)
-- [ ] Integrate with Local Models (inference)
-- [ ] Integrate with Orchestration (scheduling, retries)
+- [x] Integrate with Identity Graph (entity resolution)
+- [x] Integrate with Local Models (inference)
+- [x] Integrate with Orchestration (scheduling, retries)
 
 ### 3.2 Event Batcher
 - [x] Implement time-based batching
@@ -218,11 +218,11 @@
 - [x] Implement audit log coordination
 
 ### 3.7 Confidence Scorer
-- [ ] Implement logprob-based scoring
-- [ ] Implement evidence strength scoring
+- [x] Implement logprob-based scoring
+- [x] Implement evidence strength scoring
 
 ### 3.8 Contradiction Detector
-- [ ] Implement semantic neighborhood comparison
+- [x] Implement semantic neighborhood comparison
 
 ---
 
@@ -343,7 +343,7 @@
 - [ ] Implement persona trajectory extrapolation
 
 ### 6.7 Decay Engine
-- [ ] Implement nightly decay run
+- [x] Implement nightly decay run
 
 ### 6.8 Model Adapter
 - [ ] Implement re-anchoring on model swap
@@ -513,9 +513,9 @@
 - [ ] Implement capability inventory scanning
 
 ### 10.5 Evaluation Framework Implementation
-- [ ] Implement Evaluation Runner
-- [ ] Implement Ground Truth Manager
-- [ ] Implement Report Generator
+- [x] Implement Evaluation Runner
+- [x] Implement Ground Truth Manager
+- [x] Implement Report Generator
 
 ---
 
@@ -541,17 +541,17 @@
 - [ ] Implement Incident Responder
 
 ### 11.3 Evaluation Subsystem
-- [ ] Implement per-capability evaluation specifications
-- [ ] Implement evaluation running infrastructure
+- [x] Implement per-capability evaluation specifications
+- [x] Implement evaluation running infrastructure
 
 ### 11.4 Missing Evaluation Files to Create
-- [ ] Create `evaluations/extract_belief.md`
-- [ ] Create `evaluations/detect_goal.md`
-- [ ] Create `evaluations/memory_retrieval.md`
-- [ ] Create `evaluations/build_identity_snapshot.md`
-- [ ] Create `evaluations/update_persona.md`
-- [ ] Create `evaluations/knowledge_synthesis.md`
-- [ ] Create `evaluations/predict_next_task.md`
+- [x] Create `evaluations/extract_belief.md`
+- [x] Create `evaluations/detect_goal.md`
+- [x] Create `evaluations/memory_retrieval.md`
+- [x] Create `evaluations/build_identity_snapshot.md`
+- [x] Create `evaluations/update_persona.md`
+- [x] Create `evaluations/knowledge_synthesis.md`
+- [x] Create `evaluations/predict_next_task.md`
 
 ### 11.5 Missing Interface/Config Files
 - [ ] Create `interfaces/memory_api.md`
@@ -586,17 +586,17 @@
 
 | Area | Status |
 |------|--------|
-| Foundation (Phase 1) | ~90% — 12 DB tables, 16 schema validators |
+| Foundation (Phase 1) | ~95% — 12 DB tables, 16 schema validators, startup integrity verification |
 | Observation (Phase 2) | ~80% — Normalizer, IngestQueue, 2 adapters |
 | Extraction (Phase 3) | ~80% — ModelClient, PromptLibrary, Validator, Batcher, Writer |
 | Memory (Phase 4) | ~90% — MemoryAPI, Snapshots, Compaction, Retention, Exporter |
 | Identity Graph (Phase 5) | ~95% — All 9 modules |
-| Persona Engine (Phase 6) | ~80% — VectorStore, Embeddings, Updater, Scorer |
+| Persona Engine (Phase 6) | ~90% — VectorStore, Embeddings, Updater, Scorer, DecayEngine |
 | Digital Twin (Phase 7) | ~80% — All 8 components |
 | Action Engine (Phase 8) | ~85% — All 8 components, 3 capabilities |
 | Synthesis Engine (Phase 9) | ~85% — All 7 components, 4 summary types |
 | Orchestration (Cross-cutting) | ~60% — Scheduler, Retry, Main Loop, Pipeline |
 | Security (Cross-cutting) | ~60% — Auth, Authorization, Secrets, Injection |
-| Evaluations (Cross-cutting) | ~10% — Stub |
+| Evaluations (Cross-cutting) | ~80% — Runner, Ground Truth, Report Generator |
 
-**213 tests passing**, ruff clean, format clean, mypy clean across 120+ source files.
+**244 tests passing**, ruff clean, format clean, mypy clean across 120+ source files.

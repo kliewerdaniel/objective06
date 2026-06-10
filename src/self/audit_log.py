@@ -121,6 +121,35 @@ class AuditLog:
             "details": errors[:10],
         }
 
+    def verify_startup_integrity(self) -> dict[str, Any]:
+        errors = self.verify_chain()
+        if errors:
+            return {"integrity_ok": False, "errors": errors}
+
+        entries = self._storage.query("audit_log_entry", {"limit": 1000000})
+        entries.sort(key=lambda e: e["timestamp"])
+
+        if not entries:
+            return {"integrity_ok": self._last_hash is None, "errors": []}
+
+        last_entry = entries[-1]
+        last_hash = self._compute_hash(last_entry)
+
+        if last_hash != self._last_hash:
+            return {
+                "integrity_ok": False,
+                "errors": [
+                    {
+                        "id": last_entry["id"],
+                        "error": "head_hash_mismatch",
+                        "expected_head": str(self._last_hash),
+                        "actual_head": str(last_hash),
+                    }
+                ],
+            }
+
+        return {"integrity_ok": True, "errors": []}
+
     @property
     def entry_count(self) -> int:
         return self._storage.count("audit_log_entry")

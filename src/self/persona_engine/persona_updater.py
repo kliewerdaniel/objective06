@@ -27,3 +27,11 @@ class PersonaUpdater:
             self._embedder.model_id,
             reason=f"Updated from knowledge: {knowledge.get('name', '')}",
         )
+
+    def seed_from_onboarding(self, data: dict[str, Any]) -> str:
+        new_vec = self._embedder.embed_onboarding(data)
+        return self._vector_store.save_snapshot(
+            new_vec,
+            self._embedder.model_id,
+            reason=f"Seed from onboarding: {data.get('role', 'unknown')}",
+        )

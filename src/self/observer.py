@@ -21,6 +21,8 @@ class Observer:
         health_monitor: HealthMonitor,
         metrics: MetricsCollector,
         adapters: list[BaseSourceAdapter] | None = None,
+        orchestrator: Any | None = None,
+        security: Any | None = None,
     ) -> None:
         self._normalizer = normalizer
         self._queue = ingest_queue
@@ -28,9 +30,22 @@ class Observer:
         self._health = health_monitor
         self._metrics = metrics
         self._adapters: list[BaseSourceAdapter] = adapters or []
+        self._orchestrator = orchestrator
+        self._security = security
         self._log = logging.getLogger("self.observer")
 
     def register_adapter(self, adapter: BaseSourceAdapter) -> None:
+        if self._security:
+            user = "observer"
+            capability = f"adapter.{adapter.name}"
+            check = self._security.check_permission(user, capability)
+            if not check.get("allowed", False):
+                self._log.warning(
+                    "Permission denied for adapter %s: %s",
+                    adapter.name,
+                    check.get("reason", "unknown"),
+                )
+                return
         self._adapters.append(adapter)
 
     def start(self) -> None:
@@ -38,6 +53,8 @@ class Observer:
             adapter.start()
             self._health.heartbeat(adapter.name, SubsystemStatus.HEALTHY, "started")
             self._log.info("Adapter started: %s", adapter.name)
+        if self._orchestrator:
+            self._orchestrator.scheduler.every(1.0, self.poll_once, label="observer.poll")
 
     def stop(self) -> None:
         for adapter in self._adapters:

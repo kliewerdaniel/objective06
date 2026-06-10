@@ -19,11 +19,13 @@ class Extractor:
         knowledge_writer: KnowledgeWriter,
         batcher: EventBatcher | None = None,
         validator: OutputValidator | None = None,
+        identity_graph: Any | None = None,
     ) -> None:
         self._model = model_client
         self._writer = knowledge_writer
         self._batcher = batcher or EventBatcher()
         self._validator = validator or OutputValidator()
+        self._identity_graph = identity_graph
         self._log = logging.getLogger("self.extractor")
 
     def process_events(
@@ -73,6 +75,12 @@ class Extractor:
             description = item.get("description", item.get("content", ""))
             confidence = item.get("confidence", 0.5)
             ko_type = prompt_id.replace("extract_", "").replace("detect_", "")
+
+            # Resolve entities using Identity Graph if available
+            entity_id = None
+            if self._identity_graph:
+                entity_id = self._resolve_entity_from_item(item, ko_type)
+
             ko_id = self._writer.write(
                 type=ko_type,
                 name=name,
@@ -83,9 +91,26 @@ class Extractor:
                 prompt_id=prompt_id,
                 model_id=self._model.model_name,
                 reasoning=f"Extracted via {prompt_id} from {len(events)} events",
+                entity_id=entity_id,
             )
             produced_ids.append(ko_id)
         return produced_ids
+
+    def _resolve_entity_from_item(self, item: dict[str, Any], ko_type: str) -> str | None:
+        if not self._identity_graph:
+            return None
+
+        entity_name = item.get("entity", item.get("name", ""))
+        if not entity_name:
+            return None
+
+        node_type = "person" if ko_type in ["belief", "goal", "project"] else "concept"
+        existing = self._identity_graph.resolver.resolve(entity_name)
+        if existing:
+            return existing.id
+
+        node_id = self._identity_graph.node_store.create(node_type, entity_name)
+        return node_id
 
     def _get_prompt_def(self, prompt_id: str) -> dict[str, Any]:
         from self.prompt_library import get_prompt as gp

@@ -73,6 +73,12 @@ def main() -> None:
     health.heartbeat("audit_log")
     log.info("Audit log initialized")
 
+    audit_log_status = audit_log.verify_startup_integrity()
+    if not audit_log_status["integrity_ok"]:
+        log.error("Audit log integrity check failed: %s", audit_log_status["errors"])
+    else:
+        log.info("Audit log integrity check passed")
+
     event_log = EventLog(storage=storage, raw_dir=config.raw_dir)
     log.info("Event log initialized")
 
@@ -92,6 +98,14 @@ def main() -> None:
     ingest_queue = IngestQueue(storage)
     health.heartbeat("ingest_queue")
 
+    # ── Phase 11: Security (early init for Observer integration) ─────
+    security = Security(storage=storage)
+    log.info("Security initialized")
+
+    # ── Phase 5: Identity Graph (early init for Extractor integration) ─
+    identity_graph = IdentityGraph(storage=storage, audit_log=audit_log)
+    log.info("Identity graph initialized")
+
     observer = Observer(
         normalizer=normalizer,
         ingest_queue=ingest_queue,
@@ -99,6 +113,8 @@ def main() -> None:
         health_monitor=health,
         metrics=metrics,
         adapters=[],
+        orchestrator=None,  # Will be set after orchestrator creation
+        security=security,
     )
     log.info("Observer initialized")
 
@@ -129,6 +145,7 @@ def main() -> None:
         knowledge_writer=knowledge_writer,
         batcher=event_batcher,
         validator=output_validator,
+        identity_graph=identity_graph,
     )
     log.info("Extractor initialized (model=%s)", config.embedding_model)
 
@@ -141,10 +158,6 @@ def main() -> None:
     )
     log.info("Memory initialized")
 
-    # ── Phase 5: Identity Graph ──────────────────────────────────────
-    identity_graph = IdentityGraph(storage=storage, audit_log=audit_log)
-    log.info("Identity graph initialized")
-
     # ── Phase 6: Persona Engine ──────────────────────────────────────
     persona_model = ModelClient(
         model=config.embedding_model,
@@ -155,6 +168,7 @@ def main() -> None:
         storage=storage,
         model_client=persona_model,
         vector_dir=config.vector_dir,
+        model_lineage_id=config.model_lineage_id,
     )
     log.info("Persona engine initialized (model=%s)", config.embedding_model)
 
@@ -189,10 +203,6 @@ def main() -> None:
         storage=storage,
     )
     log.info("Synthesis engine initialized")
-
-    # ── Phase 11: Security ──────────────────────────────────────────
-    security = Security(storage=storage)
-    log.info("Security initialized")
 
     # ── Evaluation (cross-cutting) ────────────────────────────────────
     evaluation = Evaluation(storage=storage)
@@ -256,9 +266,13 @@ def main() -> None:
         audit_log=audit_log,
         loop_interval=config.loop_interval_ms / 1000.0,
     )
+    observer._orchestrator = orchestrator  # Set orchestrator reference for scheduling
     health.heartbeat("orchestrator", SubsystemStatus.HEALTHY, "all subsystems online")
     metrics.gauge("system.subsystems", 12)
     log.info("Orchestrator initialized — all subsystems online")
+
+    # Schedule nightly decay engine (24h = 86400s)
+    orchestrator.scheduler.every(86400, persona_engine.decay_engine.run, "nightly_decay")
 
     # ── Main Loop ────────────────────────────────────────────────────
     shutdown_requested = False
