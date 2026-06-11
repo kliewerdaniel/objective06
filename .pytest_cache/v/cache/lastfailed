@@ -1,9 +1,1 @@
-{
-  "tests/test_digital_twin.py::test_safe_query": true,
-  "tests/test_digital_twin.py::test_injection_detected": true,
-  "tests/test_digital_twin.py::test_intake_valid": true,
-  "tests/test_digital_twin.py::test_intake_injection": true,
-  "tests/test_digital_twin.py::test_twin_ask": true,
-  "tests/test_digital_twin.py::test_twin_with_session": true,
-  "tests/test_digital_twin.py::test_twin_injection_rejected": true
-}
+{}
